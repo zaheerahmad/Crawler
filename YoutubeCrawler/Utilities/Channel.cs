@@ -20,6 +20,7 @@ namespace YoutubeCrawler.Utilities
         public static string channelTitleXPath = "//Atom:entry/Atom:title";
         public static string channelName = "";
         public static string channelId = "";
+        public static int startIndex = 1;
 
         public static bool ParseChannel(YouTubeRequest pYoutubeRequest, string pChannelName)
         {
@@ -97,13 +98,20 @@ namespace YoutubeCrawler.Utilities
                     }
                 }
             }
+
+            //Working for Channel's Video
+            Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
             File.AppendAllText(channelFileName, "Video Lists \r\n");
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId);
+            WriteVideoLists(pYoutubeRequest, pChannelName, channelId,startIndex,videoDictionary);
             return true;
         }
 
-        public static void WriteVideoLists(YouTubeRequest pYoutubeRequest, string pChannelName, string pChannelId)
+        public static void WriteVideoLists(YouTubeRequest pYoutubeRequest, string pChannelName, string pChannelId, int startIndex, Dictionary<string,VideoWrapper> videoDictionary)
         {
+            //Base Case
+            if (startIndex >= 1000)
+                return;
+            //Base Case Ended
             string videoName = String.Empty;
             string videoUrl = String.Empty;
             //string url = String.Empty;
@@ -113,13 +121,10 @@ namespace YoutubeCrawler.Utilities
             string videFileNameXML = ConfigurationManager.AppSettings["channelsVideoFileXML"].ToString();
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
 
-            int startIndex = 1;
-            Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
-
             string channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=published";
             WebRequest nameRequest = WebRequest.Create(channelUrl);
             HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
-
+            
             Stream nameStream = nameResponse.GetResponseStream();
             StreamReader nameReader = new StreamReader(nameStream);
 
@@ -162,6 +167,8 @@ namespace YoutubeCrawler.Utilities
                     }
                 }
             }
+            startIndex+=25;
+            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary);
         }
     }
 }
