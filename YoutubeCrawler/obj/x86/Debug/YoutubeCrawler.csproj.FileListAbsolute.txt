@@ -1,0 +1,21 @@
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.exe
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.pdb
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.frmYoutubeCrawler.resources
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.Properties.Resources.resources
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.exe
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.pdb
+D:\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.exe.config
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.exe.config
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.exe
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.pdb
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.exe
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\YoutubeCrawler.pdb
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.frmYoutubeCrawler.resources
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.Properties.Resources.resources
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\GenerateResource.read.1.tlog
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\obj\x86\Debug\GenerateResource.write.1.tlog
+E:\Work\Youtube Crawler\Youtube Crawler\YoutubeCrawler\YoutubeCrawler\bin\Debug\HtmlAgilityPack.dll
