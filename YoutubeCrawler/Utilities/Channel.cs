@@ -16,6 +16,19 @@ namespace YoutubeCrawler.Utilities
 {
     class Channel
     {
+        public static string channelAtomEntry = "//Atom:entry";
+        //public static string channelStatisticsXpath = "//Atom:entry/yt:channelStatistics";  //Contains subscriberCount and viewCount
+        //public static string channelIdXPath = "//Atom:entry/Atom:id";
+        //public static string channelUpdatedXPath = "//Atom:entry/Atom:updated";
+        public static string channelTitleXPath = "//Atom:entry/Atom:title";
+        //public static string channelSummaryXPath = "//Atom:entry/Atom:summary";
+        public static string channelName = "";
+        public static string channelId = "";
+        //public static string lastUpdated = "";
+        ////public static string channelId = "";
+        //public static string channelSubscribersCount = "";
+        //public static string channelViewCount = "";
+
         //public static bool Crawl(string pChannelName, YouTubeRequest pYouTubeRequest)
         //{
         //    string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
@@ -283,47 +296,64 @@ namespace YoutubeCrawler.Utilities
 
             XmlDocument doc = new XmlDocument();
             doc.Load(channelFileNameXML);
-            
-            XmlElement element = doc.DocumentElement;
-            //For Subscription and Views Count
-            XmlNodeList nodeList = element.ChildNodes;
-            bool doneTitle = false;
-            bool doneStats = false;
-            bool doneSummary = false;
-            foreach (XmlNode node in nodeList)
+            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
+            namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom"); 
+            XmlNodeList listResult = doc.SelectNodes(channelTitleXPath,namespaceManager);
+            int count = 0;
+            foreach (XmlNode node in listResult)
             {
-                if (node.Name.Equals("entry"))
+                count++;
+                if (node.InnerText.Equals(pChannelName))
                 {
-                    XmlNodeList list = node.ChildNodes;
-                    //bool entryDone = false;
-                    foreach (XmlNode n in list)
+                    break;
+                }
+            }
+            XmlNodeList entryNode = doc.SelectSingleNode(channelAtomEntry + "[" + count + "]",namespaceManager).ChildNodes;
+            foreach (XmlNode n in entryNode)
+            {
+                if (n.Name.Equals("title") && n.InnerText.Equals(pChannelName))
+                {
+                    File.AppendAllText(channelFileName, "Channel Name: " + n.InnerText + "\r\n");
+                }
+                else if (n.Name.Equals("yt:channelStatistics"))
+                {
+                    File.AppendAllText(channelFileName, "Subscribers Count: " + n.Attributes["subscriberCount"].Value + "\r\n");
+                    File.AppendAllText(channelFileName, "Views Count: " + n.Attributes["viewCount"].Value + "\r\n");
+                }
+                else if (n.Name.Equals("summary"))
+                {
+                    File.AppendAllText(channelFileName, "Channel Description: " + n.InnerText + "\r\n");
+                }
+                else if (n.Name.Equals("id"))
+                {
+                    string id = n.InnerText;
+                    string[] arrId = n.InnerText.Split(new Char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    bool indexFound = false;
+                    for (int i = 0; i < arrId.Length; i++)
                     {
-
-                        if (n.Name.Equals("title") && n.InnerText.Equals(pChannelName))
+                        if (arrId[i].Equals("Channel", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            File.AppendAllText(channelFileName, "Channel Name: " + n.InnerText + "\r\n");
-                            doneTitle = true;
+                            indexFound = true;
+                            continue;
                         }
-                        else if (n.Name.Equals("yt:channelStatistics") && doneTitle)
+                        if (indexFound)
                         {
-                            File.AppendAllText(channelFileName, "Subscribers Count: " + n.Attributes["subscriberCount"].Value + "\r\n");
-                            File.AppendAllText(channelFileName, "Views Count: " + n.Attributes["viewCount"].Value + "\r\n");
-                            doneStats = true;
-                        }
-                        else if (n.Name.Equals("summary") && doneTitle)
-                        {
-                            File.AppendAllText(channelFileName, "Channel Description: " + Environment.NewLine + "\r" + n.InnerText + "\r\n");
-                            doneSummary = true;
-                        }
-                        if (doneTitle && doneSummary && doneStats)
-                        {
-                            //File.AppendAllText(channelFileName, Environment.NewLine + "\r\n");
+                            channelId = arrId[i];
                             break;
                         }
                     }
                 }
             }
+            WriteVideoLists(pYoutubeRequest, pChannelName, channelId);
             return true;
+        }
+
+        public static void WriteVideoLists(YouTubeRequest pYoutubeRequest, string pChannelName, string pChannelId)
+        {
+            int startIndex = 0;
+            string channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=published";
+            WebRequest nameRequest = WebRequest.Create(channelUrl);
+            HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
         }
         //public static void WriteVideoLists(YouTubeRequest pYoutubeRequest)
         //{
