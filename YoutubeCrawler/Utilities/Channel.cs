@@ -254,34 +254,105 @@ namespace YoutubeCrawler.Utilities
         //    //}
         //}
         //string pVideoId, YouTubeRequest pYoutubeRequest, string pFilePath
-        public static void WriteVideoLists(YouTubeRequest pYoutubeRequest)
+
+        public static bool ParseChannel(YouTubeRequest pYoutubeRequest, string pChannelName)
         {
-            int startIndex = 1;
-            int count = 0;
-            try
+            string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
+            string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
+
+            //This Request will give us 10 channels from index 1, which is searched by adding its name.
+
+            //e.g.https://gdata.youtube.com/feeds/api/channels?q=" + pChannelName + "&start-index=1&max-results=10&v=2
+
+            //q=<Channel Name>
+            //start-index = <start Index of Search result> (by default 1st Index is '1')
+            //max-result = <page size (containing number of channels)>
+            //v = Not known yet. :S
+
+            //e.g.https://gdata.youtube.com/feeds/api/channels?q=" + pChannelName + "&start-index=1&max-results=10&v=2
+            string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
+            WebRequest nameRequest = WebRequest.Create(channelUrl);
+            HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
+            
+            Stream nameStream = nameResponse.GetResponseStream();
+            StreamReader nameReader = new StreamReader(nameStream);
+            
+            string xmlData = nameReader.ReadToEnd();
+            
+            File.WriteAllText(channelFileNameXML, xmlData);
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(channelFileNameXML);
+            
+            XmlElement element = doc.DocumentElement;
+            //For Subscription and Views Count
+            XmlNodeList nodeList = element.ChildNodes;
+            bool doneTitle = false;
+            bool doneStats = false;
+            bool doneSummary = false;
+            foreach (XmlNode node in nodeList)
             {
-                while (true)
+                if (node.Name.Equals("entry"))
                 {
-                    Uri channelEntryUrl = new Uri("http://gdata.youtube.com/feeds/api/videos/BfJVgXBfSH8?start-index=" + startIndex);
-                    Video videoFeel = pYoutubeRequest.Retrieve<Video>(channelEntryUrl);
-                    Feed<Comment> comments = pYoutubeRequest.GetComments(videoFeel);
-                    foreach (Comment c in comments.Entries)
+                    XmlNodeList list = node.ChildNodes;
+                    //bool entryDone = false;
+                    foreach (XmlNode n in list)
                     {
 
-                        count++;
-                    }
-                    startIndex += 25;
-                    if (startIndex == comments.TotalResults)
-                    {
-                        File.AppendAllText("count.txt", count + "\r\n");
-                        break;
+                        if (n.Name.Equals("title") && n.InnerText.Equals(pChannelName))
+                        {
+                            File.AppendAllText(channelFileName, "Channel Name: " + n.InnerText + "\r\n");
+                            doneTitle = true;
+                        }
+                        else if (n.Name.Equals("yt:channelStatistics") && doneTitle)
+                        {
+                            File.AppendAllText(channelFileName, "Subscribers Count: " + n.Attributes["subscriberCount"].Value + "\r\n");
+                            File.AppendAllText(channelFileName, "Views Count: " + n.Attributes["viewCount"].Value + "\r\n");
+                            doneStats = true;
+                        }
+                        else if (n.Name.Equals("summary") && doneTitle)
+                        {
+                            File.AppendAllText(channelFileName, "Channel Description: " + Environment.NewLine + "\r" + n.InnerText + "\r\n");
+                            doneSummary = true;
+                        }
+                        if (doneTitle && doneSummary && doneStats)
+                        {
+                            //File.AppendAllText(channelFileName, Environment.NewLine + "\r\n");
+                            break;
+                        }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                File.AppendAllText("count.txt", count + "\r\n");
-            }
+            return true;
         }
+        //public static void WriteVideoLists(YouTubeRequest pYoutubeRequest)
+        //{
+        //    int startIndex = 1;
+        //    int count = 0;
+        //    try
+        //    {
+        //        while (true)
+        //        {
+        //            Uri channelEntryUrl = new Uri("http://gdata.youtube.com/feeds/api/videos/BfJVgXBfSH8?start-index=" + startIndex);
+        //            Video videoFeel = pYoutubeRequest.Retrieve<Video>(channelEntryUrl);
+        //            Feed<Comment> comments = pYoutubeRequest.GetComments(videoFeel);
+        //            foreach (Comment c in comments.Entries)
+        //            {
+
+        //                count++;
+        //            }
+        //            startIndex += 25;
+        //            if (startIndex == comments.TotalResults)
+        //            {
+        //                File.AppendAllText("count.txt", count + "\r\n");
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText("count.txt", count + "\r\n");
+        //    }
+        //}
     }
 }
