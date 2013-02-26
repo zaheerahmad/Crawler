@@ -11,7 +11,15 @@ namespace YoutubeCrawler.Utilities
         {
             PublishedSort,
             TopRated,
-            MostViewed
+            MostViewed,
+            MostShared,
+            MostPopular,
+            TopFavourites,
+            MostRecent,
+            MostDiscussed,
+            MostResponded,
+            SortDescending,
+            SortAscending
         }
     }
 }
