@@ -344,45 +344,71 @@ namespace YoutubeCrawler.Utilities
                     }
                 }
             }
+            File.AppendAllText(channelFileName, "Video Lists \r\n");
             WriteVideoLists(pYoutubeRequest, pChannelName, channelId);
             return true;
         }
 
         public static void WriteVideoLists(YouTubeRequest pYoutubeRequest, string pChannelName, string pChannelId)
         {
-            int startIndex = 0;
+            string videoName = String.Empty;
+            string videoUrl = String.Empty;
+            //string url = String.Empty;
+            string videoId = String.Empty;
+
+            string videoFileName = ConfigurationManager.AppSettings["channelsVideoFile"].ToString();
+            string videFileNameXML = ConfigurationManager.AppSettings["channelsVideoFileXML"].ToString();
+            string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
+
+            int startIndex = 1;
+            Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
+
             string channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=published";
             WebRequest nameRequest = WebRequest.Create(channelUrl);
             HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
-        }
-        //public static void WriteVideoLists(YouTubeRequest pYoutubeRequest)
-        //{
-        //    int startIndex = 1;
-        //    int count = 0;
-        //    try
-        //    {
-        //        while (true)
-        //        {
-        //            Uri channelEntryUrl = new Uri("http://gdata.youtube.com/feeds/api/videos/BfJVgXBfSH8?start-index=" + startIndex);
-        //            Video videoFeel = pYoutubeRequest.Retrieve<Video>(channelEntryUrl);
-        //            Feed<Comment> comments = pYoutubeRequest.GetComments(videoFeel);
-        //            foreach (Comment c in comments.Entries)
-        //            {
 
-        //                count++;
-        //            }
-        //            startIndex += 25;
-        //            if (startIndex == comments.TotalResults)
-        //            {
-        //                File.AppendAllText("count.txt", count + "\r\n");
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        File.AppendAllText("count.txt", count + "\r\n");
-        //    }
-        //}
+            Stream nameStream = nameResponse.GetResponseStream();
+            StreamReader nameReader = new StreamReader(nameStream);
+
+            string xmlData = nameReader.ReadToEnd();
+
+            File.WriteAllText(videFileNameXML, xmlData);
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(videFileNameXML);
+            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
+            namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom");
+            XmlNodeList listResult = doc.SelectNodes(channelAtomEntry, namespaceManager);
+            foreach (XmlNode entry in listResult)
+            {
+                bool idFound = false;
+                bool titleFound = false;
+                foreach (XmlNode node in entry.ChildNodes)
+                {
+                    if (node.Name.Equals("id"))
+                    {
+                        videoUrl = node.InnerText;
+                        string id = videoUrl;
+                        string[] arrId = id.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                        videoId = arrId[arrId.Length - 1];
+                        idFound = true;
+                    }
+                    else if (node.Name.Equals("title"))
+                    {
+                        videoName = node.InnerText;
+                        titleFound = true;
+                    }
+                    if (idFound && titleFound)
+                    {
+                        if(videoDictionary != null && !videoDictionary.ContainsKey(videoId))
+                        {
+                            videoDictionary.Add(videoId, new VideoWrapper(videoName, videoId, videoUrl));
+                            File.AppendAllText(channelFileName, "\t" + videoName + "\r\n");
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
