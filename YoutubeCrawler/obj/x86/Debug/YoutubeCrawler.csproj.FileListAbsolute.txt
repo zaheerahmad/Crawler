@@ -42,3 +42,10 @@ D:\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\YoutubeCra
 D:\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.Properties.Resources.resources
 D:\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\GenerateResource.read.1.tlog
 D:\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\GenerateResource.write.1.tlog
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\bin\Debug\YoutubeCrawler.exe
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\bin\Debug\YoutubeCrawler.pdb
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.frmYoutubeCrawler.resources
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\YoutubeCrawler.Properties.Resources.resources
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\GenerateResource.read.1.tlog
+E:\Work\Youtube Crawler\Youtube Crawler\Youtube Crawler\trunk\YoutubeCrawler\obj\x86\Debug\GenerateResource.write.1.tlog

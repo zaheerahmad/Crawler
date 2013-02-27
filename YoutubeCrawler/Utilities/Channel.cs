@@ -177,11 +177,37 @@ namespace YoutubeCrawler.Utilities
                 int total = Int32.Parse(nodeTotal.InnerText);
                 
                 //Base Case Started
-                if (total <= startIndex)
+
+                string flag = ConfigurationManager.AppSettings["testingFlag"].ToString();
+                if (flag.Equals("true", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    tempFiles.Add(videFileNameXML);
-                    return;
+                    if (startIndex > 26)
+                    {
+                        tempFiles.Add(videFileNameXML);
+                        return;
+                    }
                 }
+                else
+                {
+                    if (ConfigurationManager.AppSettings["ExtractAllVideosFlag"].ToString().Equals("False", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        int totalVideo = Int32.Parse(ConfigurationManager.AppSettings["totalVideos"].ToString());
+                        if (totalVideo <= recordCount)
+                        {
+                            tempFiles.Add(videFileNameXML);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (total <= startIndex)
+                        {
+                            tempFiles.Add(videFileNameXML);
+                            return;
+                        }
+                    }
+                }
+
                 //Base Case Ended
 
                 File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);
