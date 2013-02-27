@@ -34,9 +34,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -102,17 +102,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Notes";
             // 
-            // label3
+            // label5
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Modern No. 20", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.DarkRed;
-            this.label3.Location = new System.Drawing.Point(6, 30);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(502, 15);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Important - Your Internet should be connected in order to extract Information fro" +
-                "m Youtube.";
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(6, 84);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(182, 16);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "2. Click on \'Crawl Data\' Button";
             // 
             // label4
             // 
@@ -124,15 +122,17 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "1. Enter Complete Channel Name";
             // 
-            // label5
+            // label3
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(6, 84);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(182, 16);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "2. Click on \'Crawl Data\' Button";
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Modern No. 20", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.DarkRed;
+            this.label3.Location = new System.Drawing.Point(6, 30);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(502, 15);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Important - Your Internet should be connected in order to extract Information fro" +
+                "m Youtube.";
             // 
             // frmYoutubeCrawler
             // 
@@ -147,7 +147,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.MaximizeBox = false;
             this.Name = "frmYoutubeCrawler";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "YouTube Crawler";

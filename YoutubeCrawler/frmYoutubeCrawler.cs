@@ -13,11 +13,15 @@ using Google.GData.YouTube;
 using Google.GData.Extensions.MediaRss;
 using Google.YouTube;
 using YoutubeCrawler.Utilities;
+using System.Threading;
 
 namespace YoutubeCrawler
 {
     public partial class frmYoutubeCrawler : Form
     {
+        ManualResetEvent signal = new ManualResetEvent(false);
+        public delegate void UpdateControlsDelegate();
+        public static bool flagDone = true;
         public frmYoutubeCrawler()
         {
             InitializeComponent();
@@ -30,8 +34,19 @@ namespace YoutubeCrawler
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //If Direct Channel Name is given..
+            Thread childThread = new Thread(new ThreadStart(StartWorking));
+            childThread.IsBackground = true;
+            childThread.Name = "Youtube Crawler";
+            childThread.Start();
+        }
+
+        public void StartWorking()
+        {
+            flagDone = false;
+            InvokeUpdateControls();
             
+            //If Direct Channel Name is given..
+
             string channelName = textBox1.Text;
             if (!channelName.Equals(""))
             {
@@ -41,12 +56,44 @@ namespace YoutubeCrawler
                     MessageBox.Show("Congratulations, Channel has been crawled Successfully", "Success");
             }
             else
-                MessageBox.Show("Please Enter a Valid Channel Name","Error");
-            
+                MessageBox.Show("Please Enter a Valid Channel Name", "Error");
+
+            flagDone = true;
+            InvokeUpdateControls();
             //---------------------------------------------------------------------------------------------------------
 
             //If Url of Channel is given
+        }
 
+        public void InvokeUpdateControls()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new UpdateControlsDelegate(UpdateControls));
+            }
+            else
+            {
+                UpdateControls();
+            }
+        }
+
+        private void UpdateControls()
+        {
+            // update your controls here
+            if (flagDone)
+            {
+                textBox1.Enabled = true;
+                button1.Enabled = true;
+                button2.Enabled = true;
+                UseWaitCursor = false;
+            }
+            else
+            {
+                textBox1.Enabled = false;
+                button1.Enabled = false;
+                button2.Enabled = false;
+                UseWaitCursor = true;
+            }
         }
 
         private bool CrawlChannel(string pChannelName)
