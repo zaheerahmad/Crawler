@@ -14,6 +14,7 @@ using Google.GData.Extensions.MediaRss;
 using Google.YouTube;
 using YoutubeCrawler.Utilities;
 using System.Threading;
+using System.IO;
 
 namespace YoutubeCrawler
 {
@@ -52,6 +53,16 @@ namespace YoutubeCrawler
             {
                 //Todo: Do Validation of Channel Name, if it is Valid Channel Name or not.
                 //For the time I am assuming it as a Valid Channel Name
+                if (!Directory.Exists(channelName))
+                {
+                    Directory.CreateDirectory(channelName);
+                }
+                else
+                {
+
+                    Directory.Delete(channelName, true);
+                    Directory.CreateDirectory(channelName);
+                }
                 if (CrawlChannel(channelName))
                     MessageBox.Show("Congratulations, Channel has been crawled Successfully", "Success");
             }
@@ -105,6 +116,11 @@ namespace YoutubeCrawler
                 //YouTubeRequest request = new YouTubeRequest(settings);
                 if (Channel.ParseChannel(pChannelName))
                     return true;
+                return false;
+            }
+            catch(UnauthorizedAccessException ex)
+            {
+                MessageBox.Show("Please Close the Driectory '" + pChannelName + "' and Try Crawling Data Again, All Data need to be removed to Crawl this Channel Again!", "Alert");
                 return false;
             }
             catch (Exception ex)

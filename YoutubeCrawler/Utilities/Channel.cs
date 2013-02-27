@@ -27,7 +27,7 @@ namespace YoutubeCrawler.Utilities
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
-            File.AppendAllText(log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             //This Request will give us 10 channels from index 1, which is searched by adding its name.
 
@@ -48,10 +48,10 @@ namespace YoutubeCrawler.Utilities
 
             string xmlData = nameReader.ReadToEnd();
 
-            File.WriteAllText(channelFileNameXML, xmlData);
+            File.WriteAllText(pChannelName + "/" + channelFileNameXML, xmlData);
 
             XmlDocument doc = new XmlDocument();
-            doc.Load(channelFileNameXML);
+            doc.Load(pChannelName + "/" + channelFileNameXML);
             XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
             namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom");
             XmlNodeList listResult = doc.SelectNodes(channelTitleXPath, namespaceManager);
@@ -69,16 +69,16 @@ namespace YoutubeCrawler.Utilities
             {
                 if (n.Name.Equals("title") && n.InnerText.Equals(pChannelName))
                 {
-                    File.AppendAllText(channelFileName, "Channel Name: " + n.InnerText + "\r\n");
+                    File.AppendAllText(pChannelName + "/" + channelFileName, "Channel Name: " + n.InnerText + "\r\n");
                 }
                 else if (n.Name.Equals("yt:channelStatistics"))
                 {
-                    File.AppendAllText(channelFileName, "Subscribers Count: " + n.Attributes["subscriberCount"].Value + "\r\n");
-                    File.AppendAllText(channelFileName, "Views Count: " + n.Attributes["viewCount"].Value + "\r\n");
+                    File.AppendAllText(pChannelName + "/" + channelFileName, "Subscribers Count: " + n.Attributes["subscriberCount"].Value + "\r\n");
+                    File.AppendAllText(pChannelName + "/" + channelFileName, "Views Count: " + n.Attributes["viewCount"].Value + "\r\n");
                 }
                 else if (n.Name.Equals("summary"))
                 {
-                    File.AppendAllText(channelFileName, "Channel Description: " + n.InnerText + "\r\n");
+                    File.AppendAllText(pChannelName + "/" + channelFileName, "Channel Description: " + n.InnerText + "\r\n");
                 }
                 else if (n.Name.Equals("id"))
                 {
@@ -105,11 +105,11 @@ namespace YoutubeCrawler.Utilities
 
             Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
 
-            File.AppendAllText(channelFileName, "Video Lists \r\n");
-            File.AppendAllText(log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-            WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.PublishedSort);
-            File.AppendAllText(log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
-            File.AppendAllText(log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + channelFileName, "Video Lists \r\n");
+            //File.AppendAllText(pChannelName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.PublishedSort);
+            //File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
             //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
             //startIndex = 1;
@@ -184,11 +184,11 @@ namespace YoutubeCrawler.Utilities
 
             //recordCount = 0;
             startIndex = 1;
-            File.AppendAllText(log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            File.AppendAllText(pChannelName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
             WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All);
-            File.AppendAllText(log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
-            File.AppendAllText(log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+            File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
+            File.AppendAllText(pChannelName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            File.AppendAllText(pChannelName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
 
             //Now Getting Videos by Related Video 
@@ -196,7 +196,7 @@ namespace YoutubeCrawler.Utilities
             //startIndex = 1;
             //GetRelatedVideos(videoDictionary);
             //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-            File.AppendAllText(log, "Leaving Parse Channel at : " + DateTime.Now);
+            File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
             return true;
         }
 
@@ -389,10 +389,10 @@ namespace YoutubeCrawler.Utilities
                 //{
                 //    return;
                 //}
-                File.WriteAllText(videFileNameXML, xmlData);
+                File.WriteAllText(pChannelName + "/" + videFileNameXML, xmlData);
 
                 XmlDocument doc = new XmlDocument();
-                doc.Load(videFileNameXML);
+                doc.Load(pChannelName + "/" + videFileNameXML);
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
                 namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom");
                 XmlNodeList listResult = doc.SelectNodes(channelAtomEntry, namespaceManager);
@@ -404,9 +404,9 @@ namespace YoutubeCrawler.Utilities
                 XmlNode nodeTotal = doc.SelectSingleNode("//openSearch:totalResults", namespaceManager1);
                 int total = Int32.Parse(nodeTotal.InnerText);
 
-                File.AppendAllText(log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);
-                //if (total <= startIndex)
-                //    return;
+                File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);
+                if (total <= startIndex)
+                    return;
                 foreach (XmlNode entry in listResult)
                 {
                     bool idFound = false;
@@ -431,7 +431,7 @@ namespace YoutubeCrawler.Utilities
                             if (videoDictionary != null && !videoDictionary.ContainsKey(videoId))
                             {
                                 videoDictionary.Add(videoId, new VideoWrapper(videoName, videoId, videoUrl));
-                                File.AppendAllText(channelFileName, "\t" + videoName + "\r\n");
+                                File.AppendAllText(pChannelName + "/" + channelFileName, "\t" + videoName + "\r\n");
                                 recordCount++;
                             }
                             break;
@@ -443,11 +443,11 @@ namespace YoutubeCrawler.Utilities
                 {
                     WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.PublishedSort); //Recursive Call
                 }
-                if (requestType == Enumeration.VideoRequestType.SortDescending)
+                else if (requestType == Enumeration.VideoRequestType.SortDescending)
                 {
                     WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortDescending); //Recursive Call
                 }
-                if (requestType == Enumeration.VideoRequestType.SortAscending)
+                else if (requestType == Enumeration.VideoRequestType.SortAscending)
                 {
                     WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortAscending); //Recursive Call
                 }
@@ -502,8 +502,68 @@ namespace YoutubeCrawler.Utilities
             }
             catch (Exception ex)
             {
-                File.AppendAllText(log, "\t\tException Found : " + ex.Message + Environment.NewLine);
-                return;
+                File.AppendAllText(pChannelName + "/" + log, "\t\tException Found : " + ex.Message + Environment.NewLine);
+                startIndex += 25;
+                if (requestType == Enumeration.VideoRequestType.PublishedSort)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.PublishedSort); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.SortDescending)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortDescending); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.SortAscending)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortAscending); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.TopRated)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopRated); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostViewed)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostViewed); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostShared)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostShared); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostPopular)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostPopular); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostDiscussed)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostDiscussed); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostRecent)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostRecent); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.MostResponded)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostResponded); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.TopFavourites)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopFavourites); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.Relevance)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Relevance); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.ViewCount)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.ViewCount); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.Rating)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Rating); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.All)
+                {
+                    WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All); //Recursive Call
+                }
             }
         }
     }
