@@ -23,6 +23,7 @@ namespace YoutubeCrawler.Utilities
         public static int startIndex = 1;
         public static int recordCount = 0;
         public static string log = ConfigurationManager.AppSettings["LogFiles"].ToString();
+        public static List<string> tempFiles = new List<string>();
         public static bool ParseChannel(string pChannelName)
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
@@ -101,8 +102,7 @@ namespace YoutubeCrawler.Utilities
                 }
             }
 
-            //Working for Channel's Video
-
+            tempFiles.Add(channelFileNameXML);
             Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
 
             File.AppendAllText(pChannelName + "/" + channelFileName, "Video Lists \r\n");
@@ -118,6 +118,13 @@ namespace YoutubeCrawler.Utilities
             File.AppendAllText(pChannelName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
             
             File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
+            
+            ///Remove All Temporary Files here
+            ///
+            Common.RemoveTempFiles(tempFiles, pChannelName);
+            ///Done
+            ///
+            
             return true;
         }
 
@@ -171,7 +178,10 @@ namespace YoutubeCrawler.Utilities
                 
                 //Base Case Started
                 if (total <= startIndex)
+                {
+                    tempFiles.Add(videFileNameXML);
                     return;
+                }
                 //Base Case Ended
 
                 File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);

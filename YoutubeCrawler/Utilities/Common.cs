@@ -7,14 +7,21 @@ using Google.GData.Extensions;
 using Google.GData.YouTube;
 using Google.GData.Extensions.MediaRss;
 using Google.YouTube;
+using System.IO;
 
 namespace YoutubeCrawler.Utilities
 {
     class Common
     {
-        public static bool UpdateFile(string pFilePath, string pFileName, string pContent)
+        public static void RemoveTempFiles(List<string> pFileName, string pChannelName)
         {
-            return true;
+            foreach (string fileName in pFileName)
+            {
+                if (File.Exists(pChannelName + "/" + fileName))
+                {
+                    File.Delete(pChannelName + "/" + fileName);
+                }
+            }
         }
     }
 }
