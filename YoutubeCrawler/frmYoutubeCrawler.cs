@@ -53,10 +53,10 @@ namespace YoutubeCrawler
         {
             try
             {
-                string developerKey = ConfigurationManager.AppSettings["developerKey"].ToString();
-                YouTubeRequestSettings settings = new YouTubeRequestSettings("Youtube Crawler App", developerKey);
-                YouTubeRequest request = new YouTubeRequest(settings);
-                if (Channel.ParseChannel(request, pChannelName))
+                //string developerKey = ConfigurationManager.AppSettings["developerKey"].ToString();
+                //YouTubeRequestSettings settings = new YouTubeRequestSettings("Youtube Crawler App", developerKey);
+                //YouTubeRequest request = new YouTubeRequest(settings);
+                if (Channel.ParseChannel(pChannelName))
                     return true;
                 return false;
             }
