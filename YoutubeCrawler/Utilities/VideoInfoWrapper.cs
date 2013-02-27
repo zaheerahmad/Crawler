@@ -13,6 +13,7 @@ namespace YoutubeCrawler.Utilities
         public string iLike { get; set; }
         public string iDislike { get; set; }
         public string description { get; set; }
+        public string videoViewCount { get; set; }
         public List<string> videoTags { get; set; }
 
 
@@ -25,6 +26,7 @@ namespace YoutubeCrawler.Utilities
             this.iDislike = string.Empty;
             this.description = string.Empty;
             this.videoTags = new List<string>();
+            this.videoViewCount = string.Empty;
         }
     }
 }
