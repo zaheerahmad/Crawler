@@ -23,7 +23,7 @@ namespace YoutubeCrawler.Utilities
             {
 
                 string videoUrl = string.Format("https://gdata.youtube.com/feeds/api/videos/{1}?v=2", pair.Key);
-               // string videoUrl = "https://gdata.youtube.com/feeds/api/videos/5l3jrR5XMSU?v=2";
+                //string videoUrl = "https://gdata.youtube.com/feeds/api/videos/5l3jrR5XMSU?v=2";
                 string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
 
 
@@ -46,17 +46,18 @@ namespace YoutubeCrawler.Utilities
                 namespaceManager.AddNamespace("yt", "http://gdata.youtube.com/schemas/2007");
                 namespaceManager.AddNamespace("media", "http://search.yahoo.com/mrss/");
 
-            
+                XmlNode node = doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager);
 
                 VideoInfoWrapper obj = new VideoInfoWrapper
                 {
                     videoChannelName = doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager).InnerText.ToString() : string.Empty,
                     videoName = doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager).InnerText.ToString() : string.Empty,
                     date = doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager).InnerText.ToString() : string.Empty,
-                    iDislike = doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numDislikes"].Value.ToString() : string.Empty,
-                    iLike = doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numLikes"].Value.ToString() : string.Empty,
+                    iDislike = doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numDislikes"] != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numDislikes"].Value.ToString() : string.Empty : string.Empty,
+                    iLike = doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numLikes"] != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numLikes"].Value.ToString() : string.Empty : string.Empty,
                     description = doc.SelectSingleNode(" //Atom:entry/media:group/media:description", namespaceManager) != null ? doc.SelectSingleNode(" //Atom:entry/media:group/media:description", namespaceManager).InnerText.ToString() : string.Empty,
                     videoTags = preapreParamsTags(doc.SelectNodes("//Atom:entry/Atom:category", namespaceManager)) != null ? preapreParamsTags(doc.SelectNodes("//Atom:entry/Atom:category", namespaceManager)) : null,
+                    videoViewCount = doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager).Attributes["viewCount"] != null ? doc.SelectSingleNode("//Atom:entry/yt:statistics",namespaceManager).Attributes["viewCount"].Value : string.Empty : string.Empty,
                 };
 
                 // for time being i have added temoporary key.. need to test this function against results provided by you
