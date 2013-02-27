@@ -108,61 +108,87 @@ namespace YoutubeCrawler.Utilities
             WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.PublishedSort);
             File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-            startIndex = 1;
-            File.AppendAllText(channelFileName, "Video Lists \r\n");
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortDescending);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+            //startIndex = 1;
+            //File.AppendAllText(channelFileName, "Video Lists \r\n");
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortDescending);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-            startIndex = 1;
-            File.AppendAllText(channelFileName, "Video Lists \r\n");
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortAscending);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+            //startIndex = 1;
+            //File.AppendAllText(channelFileName, "Video Lists \r\n");
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.SortAscending);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-            startIndex = 1;
+            //startIndex = 1;
+            ////recordCount = 0;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopRated);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostViewed);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostShared);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostPopular);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostDiscussed);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostRecent);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostResponded);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopFavourites);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Relevance);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.ViewCount);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Rating);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
+            ////recordCount = 0;
+            //startIndex = 1;
+            //WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Rating);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+
             //recordCount = 0;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopRated);
+            startIndex = 1;
+            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All);
             File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostViewed);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostShared);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostPopular);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostDiscussed);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostRecent);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.MostResponded);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
-
-            //recordCount = 0;
-            startIndex = 1;
-            WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopFavourites);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
             //Now Getting Videos by Related Video 
             //recordCount = 0;
-            startIndex = 1;
-            GetRelatedVideos(videoDictionary);
-            File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+            //startIndex = 1;
+            //GetRelatedVideos(videoDictionary);
+            //File.AppendAllText("Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
             return true;
         }
 
@@ -323,6 +349,24 @@ namespace YoutubeCrawler.Utilities
                 {
                     channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&top_favorites";
                 }
+                else if (requestType == Enumeration.VideoRequestType.Relevance)
+                {
+                    channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=relevance";
+                }
+                else if (requestType == Enumeration.VideoRequestType.ViewCount)
+                {
+                    channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=viewCount";
+                }
+                else if (requestType == Enumeration.VideoRequestType.Rating)
+                {
+                    channelUrl = ConfigurationManager.AppSettings["ChannelVideoSearch"].ToString() + pChannelName + "&start-index=" + startIndex + "&pagesize=25&orderby=rating";
+                }
+                else if (requestType == Enumeration.VideoRequestType.All)
+                {
+                //http://gdata.youtube.com/feeds/api/users/machinima/uploads?start-index=4000
+                    channelUrl = "http://gdata.youtube.com/feeds/api/users/" + pChannelName + "/uploads?&start-index=" + startIndex;
+                }
+
 
                 HttpWebRequest nameRequest = (HttpWebRequest)WebRequest.Create(channelUrl);
                 nameRequest.KeepAlive = false;
@@ -333,7 +377,10 @@ namespace YoutubeCrawler.Utilities
                 StreamReader nameReader = new StreamReader(nameStream);
 
                 string xmlData = nameReader.ReadToEnd();
-
+                if (xmlData.Trim().Equals(""))
+                {
+                    return;
+                }
                 File.WriteAllText(videFileNameXML, xmlData);
 
                 XmlDocument doc = new XmlDocument();
@@ -341,6 +388,14 @@ namespace YoutubeCrawler.Utilities
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
                 namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom");
                 XmlNodeList listResult = doc.SelectNodes(channelAtomEntry, namespaceManager);
+                ////Getting total Record
+                //XmlNamespaceManager namespaceManager1 = new XmlNamespaceManager(doc.NameTable);
+                //namespaceManager1.AddNamespace("openSearch", "http://a9.com/-/spec/opensearchrss/1.0/");
+            
+                //XmlNode nodeTotal = doc.SelectSingleNode("//openSearch:totalResults",namespaceManager1);
+                //int total = Int32.Parse(nodeTotal.InnerText);
+                //if (total <= startIndex)
+                //    return;
                 foreach (XmlNode entry in listResult)
                 {
                     bool idFound = false;
@@ -416,6 +471,22 @@ namespace YoutubeCrawler.Utilities
                 else if (requestType == Enumeration.VideoRequestType.TopFavourites)
                 {
                     WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.TopFavourites); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.Relevance)
+                {
+                    WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Relevance); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.ViewCount)
+                {
+                    WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.ViewCount); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.Rating)
+                {
+                    WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.Rating); //Recursive Call
+                }
+                else if (requestType == Enumeration.VideoRequestType.All)
+                {
+                    WriteVideoLists(pYoutubeRequest, pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All); //Recursive Call
                 }
             }
             catch (Exception ex)

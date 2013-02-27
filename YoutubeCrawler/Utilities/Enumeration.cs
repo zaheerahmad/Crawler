@@ -19,7 +19,11 @@ namespace YoutubeCrawler.Utilities
             MostDiscussed,
             MostResponded,
             SortDescending,
-            SortAscending
+            SortAscending,
+            Relevance,
+            ViewCount,
+            Rating,
+            All
         }
     }
 }

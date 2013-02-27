@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeCrawler", "YoutubeCrawler\YoutubeCrawler.csproj", "{1D30EB31-EB4F-42DC-B594-DF58FB173269}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Youtube Crawler Setup", "Youtube Crawler Setup\Youtube Crawler Setup.vdproj", "{7C28DCCF-3339-4F7E-9ACF-F0F1945ED2C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,8 @@ Global
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Debug|x86.Build.0 = Debug|x86
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x86.ActiveCfg = Release|x86
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x86.Build.0 = Release|x86
+		{7C28DCCF-3339-4F7E-9ACF-F0F1945ED2C9}.Debug|x86.ActiveCfg = Debug
+		{7C28DCCF-3339-4F7E-9ACF-F0F1945ED2C9}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
