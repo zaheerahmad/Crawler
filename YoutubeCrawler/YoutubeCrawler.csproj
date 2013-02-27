@@ -89,6 +89,7 @@
     <Compile Include="Utilities\ChannelVideo.cs" />
     <Compile Include="Utilities\Constant.cs" />
     <Compile Include="Utilities\Enumeration.cs" />
+    <Compile Include="Utilities\VideoInfoWrapper.cs" />
     <Compile Include="Utilities\VideoWrapper.cs" />
     <EmbeddedResource Include="frmYoutubeCrawler.resx">
       <DependentUpon>frmYoutubeCrawler.cs</DependentUpon>
