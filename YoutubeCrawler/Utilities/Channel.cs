@@ -23,7 +23,7 @@ namespace YoutubeCrawler.Utilities
         public static int startIndex = 1;
         public static int recordCount = 0;
         public static string log = ConfigurationManager.AppSettings["LogFiles"].ToString();
-        public static List<string> tempFiles = new List<string>();
+        //public static List<string> tempFiles = new List<string>();
         public static bool ParseChannel(string pChannelName)
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
@@ -102,7 +102,7 @@ namespace YoutubeCrawler.Utilities
                 }
             }
 
-            tempFiles.Add(channelFileNameXML);
+            Constant.tempFiles.Add(channelFileNameXML);
             Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
 
             File.AppendAllText(pChannelName + "/" + channelFileName, "Video Lists \r\n");
@@ -118,10 +118,16 @@ namespace YoutubeCrawler.Utilities
             File.AppendAllText(pChannelName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
             
             File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
-            
+
+            ///Crawl Comments
+            ///
+            ChannelComment.CrawlComments(videoDictionary, pChannelName);
+            ///Done Crawling Comments
+            ///
+
             ///Remove All Temporary Files here
             ///
-            Common.RemoveTempFiles(tempFiles, pChannelName);
+            Common.RemoveTempFiles(Constant.tempFiles, pChannelName);
             ///Done
             ///
             
@@ -183,7 +189,7 @@ namespace YoutubeCrawler.Utilities
                 {
                     if (startIndex > 26)
                     {
-                        tempFiles.Add(videFileNameXML);
+                        Constant.tempFiles.Add(videFileNameXML);
                         return;
                     }
                 }
@@ -194,7 +200,7 @@ namespace YoutubeCrawler.Utilities
                         int totalVideo = Int32.Parse(ConfigurationManager.AppSettings["totalVideos"].ToString());
                         if (totalVideo <= recordCount)
                         {
-                            tempFiles.Add(videFileNameXML);
+                            Constant.tempFiles.Add(videFileNameXML);
                             return;
                         }
                     }
@@ -202,7 +208,7 @@ namespace YoutubeCrawler.Utilities
                     {
                         if (total <= startIndex)
                         {
-                            tempFiles.Add(videFileNameXML);
+                            Constant.tempFiles.Add(videFileNameXML);
                             return;
                         }
                     }

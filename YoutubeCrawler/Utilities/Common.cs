@@ -23,5 +23,9 @@ namespace YoutubeCrawler.Utilities
                 }
             }
         }
+        public static string CleanFileName(string pFileName)
+        {
+            return pFileName.Trim().Replace(":", "").Replace("/", "").Replace("\\", "").Replace("*", "").Replace("?", "").Replace("\"", "").Replace("<", "").Replace(">", "").Replace("|", "");
+        }
     }
 }
