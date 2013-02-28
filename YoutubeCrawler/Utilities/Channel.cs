@@ -121,13 +121,14 @@ namespace YoutubeCrawler.Utilities
 
             ///Crawl Comments
             ///
-            ChannelComment.CrawlComments(videoDictionary, pChannelName);
+            ChannelComment.CrawlComments(videoDictionary, pChannelName);            
             ///Done Crawling Comments
-            ///
+            ChannelVideo.parseVideo(videoDictionary);
+            ///Done Crawling video description
 
             ///Remove All Temporary Files here
             ///
-            Common.RemoveTempFiles(Constant.tempFiles, pChannelName);
+         //   Common.RemoveTempFiles(Constant.tempFiles, pChannelName);
             ///Done
             ///
             
