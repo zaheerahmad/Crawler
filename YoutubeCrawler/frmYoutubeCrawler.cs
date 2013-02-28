@@ -59,7 +59,6 @@ namespace YoutubeCrawler
                 }
                 else
                 {
-
                     Directory.Delete(channelName, true);
                     Directory.CreateDirectory(channelName);
                 }
