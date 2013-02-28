@@ -15,6 +15,7 @@ using Google.YouTube;
 using YoutubeCrawler.Utilities;
 using System.Threading;
 using System.IO;
+using HtmlAgilityPack;
 
 namespace YoutubeCrawler
 {
