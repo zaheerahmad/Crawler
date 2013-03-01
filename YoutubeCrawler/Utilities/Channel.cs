@@ -128,7 +128,7 @@ namespace YoutubeCrawler.Utilities
 
             ///Remove All Temporary Files here
             ///
-         //   Common.RemoveTempFiles(Constant.tempFiles, pChannelName);
+            Common.RemoveTempFiles(Constant.tempFiles, pChannelName);
             ///Done
             ///
             

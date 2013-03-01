@@ -25,23 +25,17 @@ namespace YoutubeCrawler.Utilities
             string iLike = string.Empty;
             string description = string.Empty;
             try
-            {              
+            {
+                string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
                 foreach (var pair in paramsVideoDict)
                 {
 
                     string videoUrl = string.Format("https://gdata.youtube.com/feeds/api/videos/{0}?v=2", pair.Key);
-                    string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
-
-
                     WebRequest nameRequest = WebRequest.Create(videoUrl);
                     HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
-
                     Stream nameStream = nameResponse.GetResponseStream();
                     StreamReader nameReader = new StreamReader(nameStream);
-
-
                     string xmlData = nameReader.ReadToEnd();
-
                     File.WriteAllText(channelFileNameXML, xmlData);
 
                     XmlDocument doc = new XmlDocument();
@@ -79,12 +73,8 @@ namespace YoutubeCrawler.Utilities
                     File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "I dislike : " + iDislike + Environment.NewLine);
                     File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Description : " + description + Environment.NewLine);
                     File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Tags : " + string.Join(",", videoTags.ToArray()) + Environment.NewLine);
-
-
-
-
-
                 }
+                Constant.tempFiles.Add(channelFileNameXML);
             }
             catch (Exception ex)
             {
