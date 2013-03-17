@@ -89,6 +89,9 @@
     <Compile Include="Utilities\ChannelVideo.cs" />
     <Compile Include="Utilities\Constant.cs" />
     <Compile Include="Utilities\Enumeration.cs" />
+    <Compile Include="Utilities\GlobalConstants.cs" />
+    <Compile Include="Utilities\PlaylistVideoWrapper.cs" />
+    <Compile Include="Utilities\PlaylistWrapper.cs" />
     <Compile Include="Utilities\VideoCommentWrapper.cs" />
     <Compile Include="Utilities\VideoInfoWrapper.cs" />
     <Compile Include="Utilities\VideoWrapper.cs" />

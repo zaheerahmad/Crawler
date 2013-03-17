@@ -24,6 +24,7 @@ namespace YoutubeCrawler.Utilities
             string iDislike = string.Empty;
             string iLike = string.Empty;
             string description = string.Empty;
+            string url = string.Empty;
             try
             {
                 string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
@@ -48,8 +49,15 @@ namespace YoutubeCrawler.Utilities
 
                     XmlNode node = doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager);
 
+                    VideoWrapper videoWrapper = pair.Value;
                     //VideoInfoWrapper obj = new VideoInfoWrapper
                     //{
+                    if (doc.SelectSingleNode("//Atom:entry/Atom:link", namespaceManager) != null && doc.SelectSingleNode("//Atom:entry/Atom:link", namespaceManager).Attributes["rel"].Value.Equals("alternate", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        url = doc.SelectSingleNode("//Atom:entry/Atom:link", namespaceManager).Attributes["href"].Value;
+                        string[] urlArr = url.Split(new Char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                        url = urlArr[0];
+                    }
                     videoChannelName = doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager).InnerText.ToString() : string.Empty;
                     videoName = doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager).InnerText.ToString() : string.Empty;
                     date = doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager).InnerText.ToString() : string.Empty;
@@ -59,20 +67,22 @@ namespace YoutubeCrawler.Utilities
                     List<string> videoTags = preapreParamsTags(doc.SelectNodes("//Atom:entry/Atom:category", namespaceManager)) != null ? preapreParamsTags(doc.SelectNodes("//Atom:entry/Atom:category", namespaceManager)) : null;
                     string videoViewCount = doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager).Attributes["viewCount"] != null ? doc.SelectSingleNode("//Atom:entry/yt:statistics", namespaceManager).Attributes["viewCount"].Value : string.Empty : string.Empty;
                     //};
-                    videoName = Common.CleanFileName(videoName + "-" + fileVideo);   
+                    string videoNameFile = Common.CleanFileName(videoName + "-" + fileVideo);   
                     
                     if (!Directory.Exists(videoChannelName + "/" + "Videos"))
                     {
                         Directory.CreateDirectory(videoChannelName + "/" + "Videos");
                     }
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+ videoName, "Video Channel : " + videoChannelName + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Video Name : " + videoName + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Date : " + date + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Video Views : " + videoViewCount + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "I Like : " + iLike + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "I dislike : " + iDislike + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Description : " + description + Environment.NewLine);
-                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/"  +"channel_video_"+videoName, "Tags : " + string.Join(",", videoTags.ToArray()) + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Video Channel : " + videoChannelName + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Channel Url : " + videoWrapper.getChannelUrl() + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Video Name : " + videoName + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Video Url : " + url + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Date : " + date + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Video Views : " + videoViewCount + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "I Like : " + iLike + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "I dislike : " + iDislike + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Description : " + description + Environment.NewLine);
+                    File.AppendAllText(videoChannelName + "/" + "Videos" + "/" + "channel_video_" + videoNameFile, "Tags : " + string.Join(",", videoTags.ToArray()) + Environment.NewLine);
                 }
                 Constant.tempFiles.Add(channelFileNameXML);
             }

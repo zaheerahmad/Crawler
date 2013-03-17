@@ -32,6 +32,8 @@ namespace YoutubeCrawler
         private void button2_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -50,6 +52,8 @@ namespace YoutubeCrawler
             //If Direct Channel Name is given..
 
             string channelName = textBox1.Text;
+            string appName = textBox3.Text;
+            string devKey = textBox2.Text;
             if (!channelName.Equals(""))
             {
                 //Todo: Do Validation of Channel Name, if it is Valid Channel Name or not.
@@ -63,7 +67,7 @@ namespace YoutubeCrawler
                     Directory.Delete(channelName, true);
                     Directory.CreateDirectory(channelName);
                 }
-                if (CrawlChannel(channelName))
+                if (CrawlChannel(channelName, appName, devKey))
                     MessageBox.Show("Congratulations, Channel has been crawled Successfully", "Success");
             }
             else
@@ -94,6 +98,8 @@ namespace YoutubeCrawler
             if (flagDone)
             {
                 textBox1.Enabled = true;
+                textBox2.Enabled = true;
+                textBox3.Enabled = true;
                 button1.Enabled = true;
                 button2.Enabled = true;
                 UseWaitCursor = false;
@@ -101,20 +107,22 @@ namespace YoutubeCrawler
             else
             {
                 textBox1.Enabled = false;
+                textBox2.Enabled = false;
+                textBox3.Enabled = false;
                 button1.Enabled = false;
                 button2.Enabled = false;
                 UseWaitCursor = true;
             }
         }
 
-        private bool CrawlChannel(string pChannelName)
+        private bool CrawlChannel(string pChannelName, string appName, string devKey)
         {
             try
             {
                 //string developerKey = ConfigurationManager.AppSettings["developerKey"].ToString();
                 //YouTubeRequestSettings settings = new YouTubeRequestSettings("Youtube Crawler App", developerKey);
                 //YouTubeRequest request = new YouTubeRequest(settings);
-                if (Channel.ParseChannel(pChannelName))
+                if (Channel.ParseChannel(pChannelName, appName, devKey, GlobalConstants._level))
                     return true;
                 return false;
             }
