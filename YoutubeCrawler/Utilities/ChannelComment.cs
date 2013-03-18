@@ -46,6 +46,7 @@ namespace YoutubeCrawler.Utilities
 
                 GetAllComments(video, pChannelName, htmlFiles);
                 commentCount = 0;
+                break;
             }
             
             return true;
