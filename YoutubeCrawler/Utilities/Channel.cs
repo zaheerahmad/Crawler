@@ -26,9 +26,11 @@ namespace YoutubeCrawler.Utilities
         public static string channelUrlMain = string.Empty;
         public static int lastLevel = 0;
         public static Dictionary<string, VideoCommentWrapper> dictionary;
+        public static bool updatedFlag = false;
         //public static List<string> tempFiles = new List<string>();
         public static bool ParseChannel(string pChannelName, string pAppName, string pDevKey, int pLevel)
         {
+            
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
@@ -78,6 +80,7 @@ namespace YoutubeCrawler.Utilities
                 string title = String.Empty;
                 string key = String.Empty;
                 string url = String.Empty;
+                string apiURL = String.Empty;
                 Dictionary<string, PlaylistVideoWrapper> dictionaryPlayerVideoWrapper = new Dictionary<string, PlaylistVideoWrapper>();
                 Dictionary<string, VideoWrapper> dictionaryVideoWrapper = new Dictionary<string, VideoWrapper>();
                 foreach (XmlNode n in listNodes)
@@ -88,27 +91,34 @@ namespace YoutubeCrawler.Utilities
                         {
                             title = node.InnerText;
                         }
+                        else if (node.Name.Equals("link"))
+                        {
+                            if (node.Attributes["rel"].Value.Equals("alternate", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                string linkArr = node.Attributes["href"].Value;
+                                //key = linkArr[1];
+                                url = "http://www.youtube.com/watch?v=" + key;
+                            }
+                        }
                         else if (node.Name.Equals("id"))
                         {
                             string[] idArr = node.InnerText.Split(new Char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             key = idArr[idArr.Length - 1];
-                            url = "http://gdata.youtube.com/feeds/api/playlists/" + key;
+                            apiURL = "http://gdata.youtube.com/feeds/api/playlists/" + key;
                         }
                     }
-                    //PlaylistWrapper playlistWrapper = new PlaylistWrapper();
-                    //playlistWrapper.playListKey = key;
-                    //playlistWrapper.playListName = title;
-                    //playlistWrapper.playListURL = url;
-                    //if (!dictionaryPlayList.ContainsKey(key))
-                    //{
-                    //    dictionaryPlayList.Add(key, playlistWrapper);
-                    //}
-                    File.AppendAllText(pChannelName + "/" + channelFileName, "\tPlaylist Name: " + title + "\r\n");
-                    File.AppendAllText(pChannelName + "/" + channelFileName, "\tPlaylist URL: " + url + "\r\n");
-                    File.AppendAllText(pChannelName + "/" + channelFileName, "\tPlaylist Videos:\r\n");
-
-                    GetPlaylistVideos(pChannelName, url, dictionaryPlayerVideoWrapper, dictionaryVideoWrapper);
+                    StringBuilder strBuilder = new StringBuilder();
+                    strBuilder.Append("\tPlaylist Name: " + title + "\r\n");
+                    strBuilder.Append("\tPlaylist URL: " + url + "\r\n");
+                    strBuilder.Append("\tPlaylist Videos:\r\n");
+                    GetPlaylistVideos(pChannelName, apiURL, dictionaryVideoWrapper, strBuilder);
+                    if(updatedFlag)
+                        File.AppendAllText(pChannelName + "/" + channelFileName, strBuilder.ToString());
+                    updatedFlag = false;
+                    strBuilder.Remove(0, strBuilder.Length);
                 }
+                ChannelVideo.parseVideo(dictionaryVideoWrapper, pChannelName);
+                ChannelComment.CrawlComments(dictionaryVideoWrapper, pChannelName);
             }
 
 
@@ -608,7 +618,7 @@ namespace YoutubeCrawler.Utilities
             }
         }
 
-        public static void GetPlaylistVideos(string pChannelName, string pPlaylistURL, Dictionary<string, PlaylistVideoWrapper> pDictionaryPlaylistVideoWrapper, Dictionary<string, VideoWrapper> pDictionaryVideoWrapper)
+        public static void GetPlaylistVideos(string pChannelName, string pPlaylistURL, Dictionary<string, VideoWrapper> pDictionaryVideoWrapper, StringBuilder strBuilder)
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = "Playlist-" + ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
@@ -662,7 +672,8 @@ namespace YoutubeCrawler.Utilities
                         vWrapper.setVideoName(title);
                         vWrapper.setVideoUrl(url);
                         pDictionaryVideoWrapper.Add(key, vWrapper);
-                        File.AppendAllText(pChannelName + "/" + channelFileName, "\t\t" + title + "\r\n");
+                        strBuilder.Append("\t\t" + title + "\r\n");
+                        updatedFlag = true;
                     }
                 }
             }

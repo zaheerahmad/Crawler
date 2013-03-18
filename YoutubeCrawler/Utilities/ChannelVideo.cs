@@ -58,7 +58,7 @@ namespace YoutubeCrawler.Utilities
                         string[] urlArr = url.Split(new Char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
                         url = urlArr[0];
                     }
-                    videoChannelName = doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager).InnerText.ToString() : string.Empty;
+                    videoChannelName = pChannelName;//doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:author/Atom:name", namespaceManager).InnerText.ToString() : string.Empty;
                     videoName = doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:title", namespaceManager).InnerText.ToString() : string.Empty;
                     date = doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/Atom:published", namespaceManager).InnerText.ToString() : string.Empty;
                     iDislike = doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager) != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numDislikes"] != null ? doc.SelectSingleNode("//Atom:entry/yt:rating", namespaceManager).Attributes["numDislikes"].Value.ToString() : string.Empty : string.Empty;
