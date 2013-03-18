@@ -15,7 +15,7 @@ namespace YoutubeCrawler.Utilities
 {
     class ChannelVideo
     {
-        public static void parseVideo(Dictionary<string,VideoWrapper> paramsVideoDict){
+        public static void parseVideo(Dictionary<string,VideoWrapper> paramsVideoDict, string pChannelName){
 
             string fileVideo = ConfigurationManager.AppSettings["channelVideo"].ToString();
             string videoChannelName = string.Empty;
