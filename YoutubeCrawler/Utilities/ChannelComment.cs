@@ -46,7 +46,7 @@ namespace YoutubeCrawler.Utilities
 
                 GetAllComments(video, pChannelName, htmlFiles);
                 commentCount = 0;
-                break;
+                //break;
             }
             
             return true;
@@ -172,11 +172,11 @@ namespace YoutubeCrawler.Utilities
                         }
                     }
                     reader.Close();
-                    //foreach (KeyValuePair<int, string> file in pHtmlFiles)
-                    //{
-                    //    tempFiles.Add("/Comments/" + file.Value);
-                    //}
-                    //Common.RemoveTempFiles(tempFiles, pChannelName);
+                    foreach (KeyValuePair<int, string> file in pHtmlFiles)
+                    {
+                        tempFiles.Add("/Comments/" + file.Value);
+                    }
+                    Common.RemoveTempFiles(tempFiles, pChannelName);
                     if (breakLoop)
                         break;
                 }
