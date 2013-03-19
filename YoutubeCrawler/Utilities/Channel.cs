@@ -17,7 +17,7 @@ namespace YoutubeCrawler.Utilities
     class Channel
     {
         public static string channelAtomEntry = "//Atom:entry";
-        public static string channelTitleXPath = "//Atom:entry/Atom:title";
+        public static string channelTitleXPath = "//Atom:entry/Atom:author";
         public static string channelName = "";
         public static string channelId = "";
         public static int startIndex = 1;
@@ -65,7 +65,7 @@ namespace YoutubeCrawler.Utilities
             foreach (XmlNode node in listResult)
             {
                 count++;
-                if (node.InnerText.Equals(pChannelName))
+                if (node.FirstChild.InnerText.Equals(pChannelName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     break;
                 }
@@ -377,7 +377,7 @@ namespace YoutubeCrawler.Utilities
                 foreach (XmlNode node in listResult)
                 {
                     count++;
-                    if (node.InnerText.Equals(channelName))
+                    if (node.FirstChild.InnerText.Equals(channelName))
                     {
                         break;
                     }
@@ -468,13 +468,12 @@ namespace YoutubeCrawler.Utilities
                 ///Done
                 ///
             }
-            else
-            {
-                //Other type of extraction here
-                File.AppendAllText(channelName + "/" + channelFileName, "No Channel Found, Extracting Users Other Information" + "\r\n\r\n");
-                //Extract Playlists
-                ExtractFromPlaylist(channelName, userId, 1);
-            }
+            //Extract Playlists
+            ExtractFromPlaylist(channelName, userId, 1);
+
+            //Extract Favourites
+            ExtractFromUserFavourite(channelName, userId, 1);
+            
         }
 
         public static void GetPlaylistVideos(string pChannelName, string pPlaylistURL, Dictionary<string, VideoWrapper> pDictionaryVideoWrapper, StringBuilder strBuilder, int pStartIndex)
@@ -541,13 +540,14 @@ namespace YoutubeCrawler.Utilities
             pStartIndex += 25;
             GetPlaylistVideos(pChannelName, pPlaylistURL, pDictionaryVideoWrapper, strBuilder, pStartIndex);
         }
+
         public static void ExtractFromPlaylist(string pChannelName, string pUserId, int pStartIndex)
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
-            string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
+            //string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
             WebRequest nameRequest;
             HttpWebResponse nameResponse;
             Stream nameStream;
@@ -556,9 +556,8 @@ namespace YoutubeCrawler.Utilities
             //File.WriteAllText(pChannelName + "/" + channelFileNameXML, xmlData);
 
             //Other type of extraction here
-            File.AppendAllText(pChannelName + "/" + channelFileName, "No Channel Found, Extracting Users Other Information" + "\r\n\r\n");
             //Extract Playlists
-            string playlistUrl = "https://gdata.youtube.com/feeds/api/users/" + pUserId + "/playlists?v=2";    //This will return all Playlists of this user
+            string playlistUrl = "https://gdata.youtube.com/feeds/api/users/" + pUserId + "/playlists?v=2&start-index=" + pStartIndex;    //This will return all Playlists of this user
             nameRequest = WebRequest.Create(playlistUrl);
             nameResponse = (HttpWebResponse)nameRequest.GetResponse();
 
@@ -589,6 +588,8 @@ namespace YoutubeCrawler.Utilities
                 Dictionary<string, PlaylistWrapper> dictionaryPlayList = new Dictionary<string, PlaylistWrapper>();
 
                 XmlNodeList listNodes = doc.SelectNodes("//Atom:entry", namespaceManager);
+                if (listNodes.Count == 0)
+                    return;
                 string title = String.Empty;
                 string key = String.Empty;
                 string url = String.Empty;
@@ -606,9 +607,8 @@ namespace YoutubeCrawler.Utilities
                         {
                             if (node.Attributes["rel"].Value.Equals("alternate", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                string linkArr = node.Attributes["href"].Value;
+                                url = node.Attributes["href"].Value;
                                 //key = linkArr[1];
-                                url = "http://www.youtube.com/watch?v=" + key;
                             }
                         }
                         else if (node.Name.Equals("id"))
@@ -630,6 +630,104 @@ namespace YoutubeCrawler.Utilities
                 }
                 ChannelVideo.parseVideo(dictionaryVideoWrapper, pChannelName);
                 ChannelComment.CrawlComments(dictionaryVideoWrapper, pChannelName);
+                pStartIndex += 25;
+                ExtractFromPlaylist(pChannelName, pUserId, pStartIndex);
+            }
+        }
+        public static void ExtractFromUserFavourite(string pChannelName, string pUserId, int pStartIndex)
+        {
+            string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
+            string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
+            File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+
+            //string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
+            WebRequest nameRequest;
+            HttpWebResponse nameResponse;
+            Stream nameStream;
+            StreamReader nameReader;
+
+            //File.WriteAllText(pChannelName + "/" + channelFileNameXML, xmlData);
+
+            //Other type of extraction here
+            //Extract Playlists
+            string favouriteUrl = "http://gdata.youtube.com/feeds/api/users/" + pUserId + "/favorites?start-index="+ pStartIndex +"&v=2";    //This will return all Playlists of this user
+            nameRequest = WebRequest.Create(favouriteUrl);
+            nameResponse = (HttpWebResponse)nameRequest.GetResponse();
+
+            nameStream = nameResponse.GetResponseStream();
+            nameReader = new StreamReader(nameStream);
+
+            string xmlData = nameReader.ReadToEnd();
+
+            XmlDocument doc = new XmlDocument();
+            //doc.Load(pChannelName + "/" + channelFileNameXML);
+
+
+            File.WriteAllText(pChannelName + "/" + channelFileNameXML, xmlData);
+
+            doc = new XmlDocument();
+            doc.Load(pChannelName + "/" + channelFileNameXML);
+            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
+            namespaceManager.AddNamespace("Atom", "http://www.w3.org/2005/Atom");
+
+            XmlNamespaceManager openSearchNameSpace = new XmlNamespaceManager(doc.NameTable);
+            openSearchNameSpace.AddNamespace("openSearch", "http://a9.com/-/spec/opensearch/1.1/");
+            XmlNode totalRecordNode = doc.SelectSingleNode("//openSearch:totalResults", openSearchNameSpace);
+
+            if (totalRecordNode != null && !totalRecordNode.InnerText.Equals("0"))
+            {
+                XmlNode titleNode = doc.SelectSingleNode("//Atom:title", namespaceManager);
+                File.AppendAllText(pChannelName + "/" + channelFileName, titleNode.InnerText + "\r\n");
+                Dictionary<string, PlaylistWrapper> dictionaryPlayList = new Dictionary<string, PlaylistWrapper>();
+
+                XmlNodeList listNodes = doc.SelectNodes("//Atom:entry", namespaceManager);
+                if (listNodes.Count == 0)
+                    return;
+                StringBuilder strBuilder = new StringBuilder();
+                strBuilder.Append("\tFavourite Videos:\r\n");
+                string title = String.Empty;
+                string key = String.Empty;
+                string url = String.Empty;
+                string apiURL = String.Empty;
+                Dictionary<string, VideoWrapper> dictionaryVideoWrapper = new Dictionary<string, VideoWrapper>();
+                foreach (XmlNode n in listNodes)
+                {
+                    foreach (XmlNode node in n.ChildNodes)
+                    {
+                        if (node.Name.Equals("title"))
+                        {
+                            title = node.InnerText;
+                        }
+                        else if (node.Name.Equals("link"))
+                        {
+                            if (node.Attributes["rel"].Value.Equals("alternate", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                url = node.Attributes["href"].Value.Split(new Char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)[0];
+                                key = url.Split(new Char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                            }
+                        }
+                    }
+                    
+                    
+                    strBuilder.Append("\t\tVideo Name: " + title + "\r\n");
+                    if (!dictionaryVideoWrapper.ContainsKey(key))
+                    {
+                        VideoWrapper vWrapper = new VideoWrapper();
+                        vWrapper.setVideoKey(key);
+                        vWrapper.setVideoName(title);
+                        vWrapper.setVideoUrl(url);
+                        dictionaryVideoWrapper.Add(key, vWrapper);
+                        updatedFlag = true;
+                    }
+                    if (updatedFlag)
+                        File.AppendAllText(pChannelName + "/" + channelFileName, strBuilder.ToString());
+                    updatedFlag = false;
+                    strBuilder.Remove(0, strBuilder.Length);
+                }
+                ChannelVideo.parseVideo(dictionaryVideoWrapper, pChannelName);
+                ChannelComment.CrawlComments(dictionaryVideoWrapper, pChannelName);
+                pStartIndex += 25;
+                ExtractFromUserFavourite(pChannelName, pUserId, pStartIndex);
             }
         }
     }
