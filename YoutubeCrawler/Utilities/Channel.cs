@@ -32,7 +32,7 @@ namespace YoutubeCrawler.Utilities
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
-            File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             //This Request will give us 10 channels from index 1, which is searched by adding its name.
 
@@ -123,6 +123,7 @@ namespace YoutubeCrawler.Utilities
             }
 
             Constant.tempFiles.Add(channelFileNameXML);
+            //Constant.tempFiles.Add(pChannelName + "/" + log);
             Dictionary<string, VideoWrapper> videoDictionary = new Dictionary<string, VideoWrapper>();
 
             File.AppendAllText(pChannelName + "/" + channelFileName, "Video Lists \r\n");
@@ -133,11 +134,11 @@ namespace YoutubeCrawler.Utilities
 
             WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All);
 
-            File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
-            File.AppendAllText(pChannelName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-            File.AppendAllText(pChannelName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+            //File.AppendAllText(pChannelName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-            File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
+            //File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
 
             ///Crawl Comments
             ///
@@ -255,7 +256,7 @@ namespace YoutubeCrawler.Utilities
 
                 //Base Case Ended
 
-                File.AppendAllText(channelCleanedName + "/" + log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);
+                //File.AppendAllText(channelCleanedName + "/" + log, "\t\tTotal Record : " + total + "; Start Index : " + startIndex + Environment.NewLine);
                 foreach (XmlNode entry in listResult)
                 {
                     bool idFound = false;
@@ -324,7 +325,7 @@ namespace YoutubeCrawler.Utilities
             //1. Favourties, 2. Uploaded , 3. Playlist
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
-            File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             string videoUrl = "http://gdata.youtube.com/feeds/api/users/" + channelName + "/uploads?&start-index=" + startIndex;
             HttpWebRequest nameRequest1 = (HttpWebRequest)WebRequest.Create(videoUrl);
@@ -337,7 +338,7 @@ namespace YoutubeCrawler.Utilities
 
             string xmlData1 = nameReader1.ReadToEnd();
             File.WriteAllText(channelCleanedName + "/" + channelFileNameXML, xmlData1);
-
+            //Constant.tempFiles.Add(channelFileNameXML);
             XmlDocument doc1 = new XmlDocument();
             doc1.Load(channelCleanedName + "/" + channelFileNameXML);
             XmlNamespaceManager namespaceManager2 = new XmlNamespaceManager(doc1.NameTable);
@@ -447,15 +448,15 @@ namespace YoutubeCrawler.Utilities
 
                 startIndex = 1;
 
-                File.AppendAllText(channelCleanedName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+                //File.AppendAllText(channelCleanedName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
                 WriteVideoLists(channelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All);
 
-                File.AppendAllText(channelCleanedName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
-                File.AppendAllText(channelCleanedName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-                File.AppendAllText(channelCleanedName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
+                //File.AppendAllText(channelCleanedName + "/" + log, "\t\tTotal Dictionary Items : " + videoDictionary.Count + Environment.NewLine);
+                //File.AppendAllText(channelCleanedName + "/" + log, "\r\n\tLeft WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+                //File.AppendAllText(channelCleanedName + "/" + "Count.txt", "Count After complete Request Response (Expected 1000) : " + recordCount + "\r\n");
 
-                File.AppendAllText(channelCleanedName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
+                //File.AppendAllText(channelCleanedName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
 
                 ///Crawl Comments
                 ///
@@ -492,6 +493,7 @@ namespace YoutubeCrawler.Utilities
             string xmlData = nameReader.ReadToEnd();
 
             File.WriteAllText(channelCleanedName + "/" + channelFileNameXML, xmlData);
+            Constant.tempFiles.Add(channelFileNameXML);
 
             XmlDocument doc = new XmlDocument();
             doc.Load(channelCleanedName + "/" + channelFileNameXML);
@@ -542,6 +544,7 @@ namespace YoutubeCrawler.Utilities
             }
             pStartIndex += 25;
             GetPlaylistVideos(pChannelName, pPlaylistURL, pDictionaryVideoWrapper, strBuilder, pStartIndex);
+            Common.RemoveTempFiles(Constant.tempFiles, channelCleanedName);
         }
 
         public static void ExtractFromPlaylist(string pChannelName, string pUserId, int pStartIndex)
@@ -549,7 +552,7 @@ namespace YoutubeCrawler.Utilities
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             string channelCleanedName = Common.CleanFileName(pChannelName);
-            File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             //string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
             WebRequest nameRequest;
@@ -575,7 +578,7 @@ namespace YoutubeCrawler.Utilities
 
 
             File.WriteAllText(channelCleanedName + "/" + channelFileNameXML, xmlData);
-
+            Constant.tempFiles.Add(channelFileNameXML);
             doc = new XmlDocument();
             doc.Load(channelCleanedName + "/" + channelFileNameXML);
             XmlNamespaceManager namespaceManager = new XmlNamespaceManager(doc.NameTable);
@@ -637,13 +640,14 @@ namespace YoutubeCrawler.Utilities
                 pStartIndex += 25;
                 ExtractFromPlaylist(pChannelName, pUserId, pStartIndex);
             }
+            Common.RemoveTempFiles(Constant.tempFiles, channelCleanedName);
         }
         public static void ExtractFromUserFavourite(string pChannelName, string pUserId, int pStartIndex)
         {
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             string channelCleanedName = Common.CleanFileName(pChannelName);
-            File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             //string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
             WebRequest nameRequest;
@@ -669,6 +673,7 @@ namespace YoutubeCrawler.Utilities
 
 
             File.WriteAllText(channelCleanedName + "/" + channelFileNameXML, xmlData);
+            Constant.tempFiles.Add(channelFileNameXML);
 
             doc = new XmlDocument();
             doc.Load(channelCleanedName + "/" + channelFileNameXML);
@@ -734,6 +739,7 @@ namespace YoutubeCrawler.Utilities
                 pStartIndex += 25;
                 ExtractFromUserFavourite(pChannelName, pUserId, pStartIndex);
             }
+            Common.RemoveTempFiles(Constant.tempFiles, channelCleanedName);
         }
     }
 }
