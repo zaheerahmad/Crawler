@@ -73,7 +73,7 @@ namespace YoutubeCrawler.Utilities
             XmlNodeList entryNode = doc.SelectSingleNode(channelAtomEntry + "[" + count + "]", namespaceManager).ChildNodes;
             foreach (XmlNode n in entryNode)
             {
-                if (n.Name.Equals("title") && n.InnerText.Equals(pChannelName))
+                if (n.Name.Equals("title"))
                 {
                     File.AppendAllText(pChannelName + "/" + channelFileName, "Channel Name: " + n.InnerText + "\r\n");
                 }
@@ -388,7 +388,7 @@ namespace YoutubeCrawler.Utilities
                 XmlNodeList entryNode = doc.SelectSingleNode(channelAtomEntry + "[" + count + "]", namespaceManager).ChildNodes;
                 foreach (XmlNode n in entryNode)
                 {
-                    if (n.Name.Equals("title") && n.InnerText.Equals(channelName))
+                    if (n.Name.Equals("title"))
                     {
                         File.AppendAllText(channelCleanedName + "/" + channelFileName, "Channel Name: " + n.InnerText + "\r\n");
                     }
