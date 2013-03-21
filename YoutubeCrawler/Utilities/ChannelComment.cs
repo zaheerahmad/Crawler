@@ -68,7 +68,7 @@ namespace YoutubeCrawler.Utilities
                 return;
             ///Base Case Ended
             ///
-
+            File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
             WebRequest nameRequest = WebRequest.Create(url);
             HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
             Stream nameStream = nameResponse.GetResponseStream();
@@ -82,13 +82,15 @@ namespace YoutubeCrawler.Utilities
                 {
                     Directory.CreateDirectory(pChannelName + "/Comments/");
                 }
+                
                 File.WriteAllText(videoName, htmlData);
+                File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "End Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine + Environment.NewLine);
                 //tempFiles.Add("/Comments/" + dictionaryValue);
                 pHtmlFiles.Add(pPageNo, dictionaryValue);
             }
             pPageNo++;
 
-            //DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
+            DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
         }
 
         public static void GetAllComments(VideoWrapper pVideoWrapper, string pChannelName, Dictionary<int, string> pHtmlFiles)
