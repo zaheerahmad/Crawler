@@ -140,13 +140,15 @@ namespace YoutubeCrawler.Utilities
 
             //File.AppendAllText(pChannelName + "/" + log, "Leaving Parse Channel at : " + DateTime.Now);
 
+            
+            ChannelVideo.parseVideo(videoDictionary, pChannelName);
+            ///Done Crawling video description
+
             ///Crawl Comments
             ///
             ChannelComment.CrawlComments(videoDictionary, pChannelName);
             ///Done Crawling Comments
-            ChannelVideo.parseVideo(videoDictionary, pChannelName);
-            ///Done Crawling video description
-
+            ///
             ///Remove All Temporary Files here
             ///
             Common.RemoveTempFiles(Constant.tempFiles, pChannelName);

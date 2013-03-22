@@ -97,11 +97,12 @@ namespace YoutubeCrawler.Utilities
         {
             string videoUrl = "https://www.youtube.com/watch?v=" + pVideoWrapper.getVideoKey();
             bool videoUrlFlag = false;
+            List<string> tempFiles = new List<string>();
             foreach (KeyValuePair<int, string> pair in pHtmlFiles)
             {
                 try
                 {
-                    List<string> tempFiles = new List<string>();
+                    
                     string videoName = pair.Value;
                     //string videoName = "Machinima PlayStation Viewer's Choice LiveStream!-1";
                     //Stream stream = File.OpenRead("New folder/Machinima PlayStation Viewer's Choice LiveStream!-1.html");
@@ -111,74 +112,104 @@ namespace YoutubeCrawler.Utilities
                     doc.LoadHtml(reader.ReadToEnd().ToString());
                     bool breakLoop = false;
 
-                    HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
-                    int i = 1;
+                    HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']//div[@class='content']");
+                    
+            
                     foreach (HtmlNode node in totalCollection)
                     {
-                        try
+                        //string[] userArr = node.InnerText.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        string user = string.Empty;
+                        string displayName = string.Empty;
+                        string date = string.Empty;
+                        string comment = string.Empty;
+                        HtmlNode nodeData = node.ParentNode;
+                        string dataId = nodeData.Attributes[2].Value.Trim();
+                        string authorId = nodeData.Attributes[1].Value.Trim();
+                        HtmlNodeCollection childNodes = node.ChildNodes;
+                        int divCount = 0;
+                        foreach (HtmlNode child in childNodes)
                         {
-                            string dataId = GetDataId(i, doc);
-                            string authorId = GetAuthorId(i, doc);
-                            string displayName = GetUser(i, doc);
-                            string time = GetTime(i, doc);
-                            string comment = GetComment(i, doc);
-                            string userName = GetUserName(i, doc);
-                            comment = Common.FilterCommentText(comment);
-
-                            //Deleted time check as sometime "time is not shown on videos comments.."
-
-                            if (!displayName.Equals("") && !comment.Equals("") && !dataId.Equals("") && !authorId.Equals("") && !userName.Equals("") && !GlobalConstants.commentDictionary.ContainsKey(dataId))
+                            if (child.Name.Equals("p"))
                             {
-                                VideoCommentWrapper commentWrapper = new VideoCommentWrapper();
-
-                                commentWrapper.authorId = authorId;
-                                commentWrapper.commentId = dataId;
-                                commentWrapper.commentText = comment;
-                                commentWrapper.time = time;
-                                commentWrapper.displayName = displayName;
-                                commentWrapper.userName = userName;
-
-                                GlobalConstants.commentDictionary.Add(dataId, commentWrapper);
-
-                                string videoFileName = pVideoWrapper.getVideoName();
-                                //videoFile = videoName;
-                                videoName = Common.CleanFileName(videoFileName + "-" + fileComment) + ".txt";
-                                if (!Directory.Exists(pChannelName + "/" + "Comments"))
+                                bool userFlag = false;
+                                //bool dateFlag = false;
+                                HtmlNodeCollection col = child.ChildNodes;
+                                foreach (HtmlNode n in col)
                                 {
-                                    Directory.CreateDirectory(pChannelName + "/" + "Comments");
-                                }
-                                commentCount++;
-                                if (!videoUrlFlag)
-                                {
-                                    File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Video Url : " + videoUrl + Environment.NewLine + "\r\n");
-                                    videoUrlFlag = true;
-                                }
-                                File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "User name : " + displayName + Environment.NewLine);
-                                File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment Date : " + time + Environment.NewLine);
-                                File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment : " + comment + Environment.NewLine);
-                            }
-                            if (parseAllComments.Equals("false", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                if (totalCommentsParse <= commentCount)
-                                {
-                                    breakLoop = true;
-                                    break;
+                                    if (n.Name.Equals("span") && !userFlag)
+                                    {
+                                        foreach (HtmlNode nNode in n.ChildNodes)
+                                        {
+                                            if (nNode.Name.Equals("a"))
+                                            {
+                                                user = nNode.Attributes["href"].Value.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                                                break;
+                                            }
+                                        }
+                                        displayName = n.InnerText.Trim();
+                                        userFlag = true;
+                                    }
+                                    else if (n.Name.Equals("span"))
+                                    {
+                                        date = n.InnerText.Trim();
+                                        //dateFlag = true;
+                                        break;
+                                    }
                                 }
                             }
-                            i++;
+                            else if (child.Name.Equals("div"))
+                            {
+                                if (divCount == 0)
+                                {
+                                    //That means Its Comment Text
+                                    comment = child.InnerText.Trim();
+                                    divCount++;
+                                }
+                            }   
                         }
-                        catch (Exception ex)
+                        if (!displayName.Equals("") && !comment.Equals("") && !dataId.Equals("") && !authorId.Equals("") && !user.Equals("") && !GlobalConstants.commentDictionary.ContainsKey(dataId))
                         {
-                            File.AppendAllText("Logs Exception Comments.txt", ex.Message + Environment.NewLine + Environment.NewLine);
-                            continue;
+                            VideoCommentWrapper commentWrapper = new VideoCommentWrapper();
+
+                            commentWrapper.authorId = authorId;
+                            commentWrapper.commentId = dataId;
+                            commentWrapper.commentText = comment;
+                            commentWrapper.time = date;
+                            commentWrapper.displayName = displayName;
+                            commentWrapper.userName = user;
+
+                            GlobalConstants.commentDictionary.Add(dataId, commentWrapper);
+
+                            string videoFileName = pVideoWrapper.getVideoName();
+                            //videoFile = videoName;
+                            videoName = Common.CleanFileName(videoFileName + "-" + fileComment) + ".txt";
+                            if (!Directory.Exists(pChannelName + "/" + "Comments"))
+                            {
+                                Directory.CreateDirectory(pChannelName + "/" + "Comments");
+                            }
+                            commentCount++;
+                            if (!videoUrlFlag)
+                            {
+                                File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Video Url : " + videoUrl + Environment.NewLine + "\r\n");
+                                videoUrlFlag = true;
+                            }
+                            File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "User name : " + displayName + Environment.NewLine);
+                            File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment Date : " + date + Environment.NewLine);
+                            File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment : " + comment + Environment.NewLine);
                         }
+                        if (parseAllComments.Equals("false", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (totalCommentsParse <= commentCount)
+                            {
+                                breakLoop = true;
+                                break;
+                            }
+                        }
+
                     }
                     reader.Close();
-                    foreach (KeyValuePair<int, string> file in pHtmlFiles)
-                    {
-                        tempFiles.Add("/Comments/" + file.Value);
-                    }
-                    Common.RemoveTempFiles(tempFiles, pChannelName);
+                    
+                    
                     if (breakLoop)
                         break;
                 }
@@ -188,6 +219,11 @@ namespace YoutubeCrawler.Utilities
                     continue;
                 }
             }
+            foreach (KeyValuePair<int, string> file in pHtmlFiles)
+            {
+                tempFiles.Add("/Comments/" + file.Value);
+            }
+            Common.RemoveTempFiles(tempFiles, pChannelName);
         }
 
         public static string GetUser(int index, HtmlDocument doc)
