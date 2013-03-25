@@ -54,43 +54,55 @@ namespace YoutubeCrawler.Utilities
 
         public static void DownloadHtmls(string pChannelName, VideoWrapper pVideo, Dictionary<int, string> pHtmlFiles, int pPageNo)
         {
-            string url = ConfigurationManager.AppSettings["VideoAllCommentsUrl"].ToString() + pVideo.getVideoKey() + "&page=" + pPageNo;
-            //string url = "http://www.youtube.com/all_comments?v=LMiNEC1M-zY" + "&page=" + pPageNo;
-            ///Base Case
-            ///
-            HtmlWeb hwObject = new HtmlWeb();
-            HtmlDocument doc = hwObject.Load(url);
-            HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
-            if (totalCollection == null)
-                return;
-            int totalCollectionCount = totalCollection.Count;
-            if (totalCollectionCount <= 0)
-                return;
-            ///Base Case Ended
-            ///
-            File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
-            WebRequest nameRequest = WebRequest.Create(url);
-            HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
-            Stream nameStream = nameResponse.GetResponseStream();
-            StreamReader nameReader = new StreamReader(nameStream);
-            string htmlData = nameReader.ReadToEnd();
-            if (htmlData != null && !htmlData.Equals(""))
+            string url = string.Empty;
+            try
             {
-                string videoName = pChannelName + "/Comments/" + Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
-                string dictionaryValue = Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
-                if (!Directory.Exists(pChannelName + "/Comments/"))
+                url = ConfigurationManager.AppSettings["VideoAllCommentsUrl"].ToString() + pVideo.getVideoKey() + "&page=" + pPageNo;
+                //string url = "http://www.youtube.com/all_comments?v=LMiNEC1M-zY" + "&page=" + pPageNo;
+                ///Base Case
+                ///
+                HtmlWeb hwObject = new HtmlWeb();
+                hwObject.UseCookies = false; // Experimental
+                HtmlDocument doc = hwObject.Load(url);
+                HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
+                if (totalCollection == null)
+                    return;
+                int totalCollectionCount = totalCollection.Count;
+                if (totalCollectionCount <= 0)
+                    return;
+                ///Base Case Ended
+                ///
+                File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
+                WebRequest nameRequest = WebRequest.Create(url);
+                HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
+                Stream nameStream = nameResponse.GetResponseStream();
+                StreamReader nameReader = new StreamReader(nameStream);
+                string htmlData = nameReader.ReadToEnd();
+                if (htmlData != null && !htmlData.Equals(""))
                 {
-                    Directory.CreateDirectory(pChannelName + "/Comments/");
-                }
-                
-                File.WriteAllText(videoName, htmlData);
-                File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "End Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-                //tempFiles.Add("/Comments/" + dictionaryValue);
-                pHtmlFiles.Add(pPageNo, dictionaryValue);
-            }
-            pPageNo++;
+                    string videoName = pChannelName + "/Comments/" + Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
+                    string dictionaryValue = Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
+                    if (!Directory.Exists(pChannelName + "/Comments/"))
+                    {
+                        Directory.CreateDirectory(pChannelName + "/Comments/");
+                    }
 
-            DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
+                    File.WriteAllText(videoName, htmlData);
+                    File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "End Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+                    //tempFiles.Add("/Comments/" + dictionaryValue);
+                    pHtmlFiles.Add(pPageNo, dictionaryValue);
+                }
+                pPageNo++;
+
+                DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
+            }
+            catch (Exception ex)
+            {
+                //Delete Cookies
+                //pPageNo++;
+                File.AppendAllText(pChannelName + "/Comments/" + "ExceptionLogs.txt", "Exception : at URL : " + url + " -> Exception Message : " + ex.Message);
+                DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);
+            }
         }
 
         public static void GetAllComments(VideoWrapper pVideoWrapper, string pChannelName, Dictionary<int, string> pHtmlFiles)
