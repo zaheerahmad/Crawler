@@ -28,8 +28,19 @@ namespace YoutubeCrawler.Utilities
         public static Dictionary<string, VideoCommentWrapper> dictionary;
         public static bool updatedFlag = false;
         //public static List<string> tempFiles = new List<string>();
+        public static int exceptionCounter = 0;
         public static bool ParseChannel(string pChannelName, string pAppName, string pDevKey, int pLevel)
         {
+            ///ReInitialize All Data
+            ///
+            channelName = "";
+            channelId = "";
+            startIndex = 1;
+            recordCount = 0;
+            updatedFlag = false;
+            ///ReInitializing Done
+            ///
+
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             //File.AppendAllText(pChannelName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
@@ -130,7 +141,7 @@ namespace YoutubeCrawler.Utilities
 
             startIndex = 1;
 
-            File.AppendAllText(pChannelName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+            //File.AppendAllText(pChannelName + "/" + log, "\tEntering WriteVideoList at: " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
             WriteVideoLists(pChannelName, channelId, startIndex, videoDictionary, Enumeration.VideoRequestType.All);
 
@@ -155,6 +166,14 @@ namespace YoutubeCrawler.Utilities
             ///Done
             ///
 
+            ///ReInitialize All Data
+            ///
+            channelName = "";
+            channelId = "";
+            startIndex = 1;
+            recordCount = 0;
+            updatedFlag = false;
+            ///ReInitializing Done
 
             dictionary = new Dictionary<string, VideoCommentWrapper>();
             dictionary = GlobalConstants.commentDictionary;
@@ -193,7 +212,7 @@ namespace YoutubeCrawler.Utilities
                 if (requestType == Enumeration.VideoRequestType.All)
                 {
                     //http://gdata.youtube.com/feeds/api/users/machinima/uploads?start-index=4000
-                    channelUrl = "http://gdata.youtube.com/feeds/api/users/" + pChannelName + "/uploads?&start-index=" + startIndex;
+                    channelUrl = "https://gdata.youtube.com/feeds/api/users/" + pChannelName + "/uploads?&start-index=" + startIndex;
                 }
 
 
@@ -224,6 +243,9 @@ namespace YoutubeCrawler.Utilities
                 //Base Case Started
 
                 if (total == 0)
+                    return;
+
+                if (listResult == null)
                     return;
 
                 string flag = ConfigurationManager.AppSettings["testingFlag"].ToString();
@@ -289,6 +311,12 @@ namespace YoutubeCrawler.Utilities
                             break;
                         }
                     }
+                    int totalVideo = Int32.Parse(ConfigurationManager.AppSettings["totalVideos"].ToString());
+                    if (totalVideo <= recordCount)
+                    {
+                        Constant.tempFiles.Add(videFileNameXML);
+                        return;
+                    }
                 }
                 startIndex += 25;
                 if (requestType == Enumeration.VideoRequestType.All)
@@ -298,7 +326,13 @@ namespace YoutubeCrawler.Utilities
             }
             catch (Exception ex)
             {
-                File.AppendAllText(Common.CleanFileName(pChannelName) + "/" + log, "\t\tException Found : " + ex.Message + Environment.NewLine);
+                exceptionCounter++;
+                if (exceptionCounter == 2)
+                {
+                    exceptionCounter = 0;
+                    return;
+                }
+                File.AppendAllText(Common.CleanFileName(pChannelName) + "/" + log, "\t\tException Found : " + ex.Message + Environment.NewLine + "startIndex = " + startIndex + Environment.NewLine + Environment.NewLine);
                 startIndex += 25;
                 if (requestType == Enumeration.VideoRequestType.All)
                 {
@@ -329,7 +363,7 @@ namespace YoutubeCrawler.Utilities
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             //File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
 
-            string videoUrl = "http://gdata.youtube.com/feeds/api/users/" + channelName + "/uploads?&start-index=" + startIndex;
+            string videoUrl = "https://gdata.youtube.com/feeds/api/users/" + channelName + "/uploads?&start-index=" + startIndex;
             HttpWebRequest nameRequest1 = (HttpWebRequest)WebRequest.Create(videoUrl);
             nameRequest1.KeepAlive = false;
             nameRequest1.ProtocolVersion = HttpVersion.Version10;
@@ -624,7 +658,7 @@ namespace YoutubeCrawler.Utilities
                         {
                             string[] idArr = node.InnerText.Split(new Char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             key = idArr[idArr.Length - 1];
-                            apiURL = "http://gdata.youtube.com/feeds/api/playlists/" + key;
+                            apiURL = "https://gdata.youtube.com/feeds/api/playlists/" + key;
                         }
                     }
                     StringBuilder strBuilder = new StringBuilder();
@@ -661,7 +695,7 @@ namespace YoutubeCrawler.Utilities
 
             //Other type of extraction here
             //Extract Playlists
-            string favouriteUrl = "http://gdata.youtube.com/feeds/api/users/" + pUserId + "/favorites?start-index="+ pStartIndex +"&v=2";    //This will return all Playlists of this user
+            string favouriteUrl = "https://gdata.youtube.com/feeds/api/users/" + pUserId + "/favorites?start-index="+ pStartIndex +"&v=2";    //This will return all Playlists of this user
             nameRequest = WebRequest.Create(favouriteUrl);
             nameResponse = (HttpWebResponse)nameRequest.GetResponse();
 

@@ -62,7 +62,7 @@ namespace YoutubeCrawler.Utilities
                 ///Base Case
                 ///
                 HtmlWeb hwObject = new HtmlWeb();
-                hwObject.UseCookies = false; // Experimental
+                //hwObject.UseCookies = false; // Experimental
                 HtmlDocument doc = hwObject.Load(url);
                 HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
                 if (totalCollection == null)
@@ -235,134 +235,135 @@ namespace YoutubeCrawler.Utilities
             {
                 tempFiles.Add("/Comments/" + file.Value);
             }
+
             Common.RemoveTempFiles(tempFiles, pChannelName);
         }
 
-        public static string GetUser(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author ']");
-                HtmlNode userName = doc.DocumentNode.SelectSingleNode(xPath);
-                if (userName == null)
-                {
-                    xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author']");
-                    userName = doc.DocumentNode.SelectSingleNode(xPath);
-                }
-                if(userName == null)
-                    return String.Empty;
-                return userName.InnerText.Trim();
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetUser: " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
-        public static string GetTime(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='time']");
-                HtmlNode time = doc.DocumentNode.SelectSingleNode(xPath);
-                if (time == null)
-                    return String.Empty;
-                return time.InnerText.Trim();
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetTime: " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
-        public static string GetComment(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "]//div[@class='content']/div[@class='comment-text']//p");
-                HtmlNodeCollection col = doc.DocumentNode.SelectNodes(xPath);
-                StringBuilder str = new StringBuilder();
-                if (col == null)
-                    return String.Empty;
-                foreach (HtmlNode comment in col)
-                {
-                    str.Append(comment.InnerText.Trim());
-                }
-                if (str.ToString() == null)
-                    return String.Empty;
-                return str.ToString();
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetComment : " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
-        public static string GetDataId(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string xPath = Common.CleanXpath(".//*[@id='all-comments']/li[" + index + "]");
-                HtmlNode dataIdNode = doc.DocumentNode.SelectSingleNode(xPath);
-                string dataId = dataIdNode.Attributes["data-id"].Value;
-                if (dataId == null || dataId == "")
-                    return String.Empty;
-                return dataId;
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetDataId: " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
-        public static string GetAuthorId(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string xPath = Common.CleanXpath(".//*[@id='all-comments']/li[" + index + "]");
-                HtmlNode dataIdNode = doc.DocumentNode.SelectSingleNode(xPath);
-                string dataAuthorId = dataIdNode.Attributes["data-author-id"].Value;
-                if (dataAuthorId == null || dataAuthorId == "")
-                    return String.Empty;
-                return dataAuthorId;
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetAuthorId: " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
-        public static string GetUserName(int index, HtmlDocument doc)
-        {
-            try
-            {
-                string userNameValue = String.Empty;
-                string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author ']//a");
-                HtmlNode userName = doc.DocumentNode.SelectSingleNode(xPath);
-                if (userName == null)
-                {
-                    xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author']//a");
-                    userName = doc.DocumentNode.SelectSingleNode(xPath);
-                }
-                if (userName == null)
-                    return String.Empty;
-                else
-                {
-                    userNameValue = userName.Attributes["href"].Value;
-                }
-                if (userNameValue == null || userNameValue == "")
-                {
-                    return String.Empty;
-                }
-                string[] user = userNameValue.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        //public static string GetUser(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author ']");
+        //        HtmlNode userName = doc.DocumentNode.SelectSingleNode(xPath);
+        //        if (userName == null)
+        //        {
+        //            xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author']");
+        //            userName = doc.DocumentNode.SelectSingleNode(xPath);
+        //        }
+        //        if(userName == null)
+        //            return String.Empty;
+        //        return userName.InnerText.Trim();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetUser: " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
+        //public static string GetTime(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='time']");
+        //        HtmlNode time = doc.DocumentNode.SelectSingleNode(xPath);
+        //        if (time == null)
+        //            return String.Empty;
+        //        return time.InnerText.Trim();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetTime: " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
+        //public static string GetComment(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "]//div[@class='content']/div[@class='comment-text']//p");
+        //        HtmlNodeCollection col = doc.DocumentNode.SelectNodes(xPath);
+        //        StringBuilder str = new StringBuilder();
+        //        if (col == null)
+        //            return String.Empty;
+        //        foreach (HtmlNode comment in col)
+        //        {
+        //            str.Append(comment.InnerText.Trim());
+        //        }
+        //        if (str.ToString() == null)
+        //            return String.Empty;
+        //        return str.ToString();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetComment : " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
+        //public static string GetDataId(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string xPath = Common.CleanXpath(".//*[@id='all-comments']/li[" + index + "]");
+        //        HtmlNode dataIdNode = doc.DocumentNode.SelectSingleNode(xPath);
+        //        string dataId = dataIdNode.Attributes["data-id"].Value;
+        //        if (dataId == null || dataId == "")
+        //            return String.Empty;
+        //        return dataId;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetDataId: " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
+        //public static string GetAuthorId(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string xPath = Common.CleanXpath(".//*[@id='all-comments']/li[" + index + "]");
+        //        HtmlNode dataIdNode = doc.DocumentNode.SelectSingleNode(xPath);
+        //        string dataAuthorId = dataIdNode.Attributes["data-author-id"].Value;
+        //        if (dataAuthorId == null || dataAuthorId == "")
+        //            return String.Empty;
+        //        return dataAuthorId;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetAuthorId: " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
+        //public static string GetUserName(int index, HtmlDocument doc)
+        //{
+        //    try
+        //    {
+        //        string userNameValue = String.Empty;
+        //        string xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author ']//a");
+        //        HtmlNode userName = doc.DocumentNode.SelectSingleNode(xPath);
+        //        if (userName == null)
+        //        {
+        //            xPath = Common.CleanXpath("//ul[@id='all-comments']//li[" + index + "][@class='comment']//div[@class='content']//p[@class='metadata']//span[@class='author']//a");
+        //            userName = doc.DocumentNode.SelectSingleNode(xPath);
+        //        }
+        //        if (userName == null)
+        //            return String.Empty;
+        //        else
+        //        {
+        //            userNameValue = userName.Attributes["href"].Value;
+        //        }
+        //        if (userNameValue == null || userNameValue == "")
+        //        {
+        //            return String.Empty;
+        //        }
+        //        string[] user = userNameValue.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-                return user[user.Length - 1];
-            }
-            catch (Exception ex)
-            {
-                File.AppendAllText(commentLogFile, "Exception in GetUserName : " + ex.Message + Environment.NewLine);
-                return String.Empty;
-            }
-        }
+        //        return user[user.Length - 1];
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        File.AppendAllText(commentLogFile, "Exception in GetUserName : " + ex.Message + Environment.NewLine);
+        //        return String.Empty;
+        //    }
+        //}
     }
 }

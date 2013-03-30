@@ -20,7 +20,14 @@ namespace YoutubeCrawler.Utilities
             {
                 if (File.Exists(pChannelName + "/" + fileName))
                 {
-                    File.Delete(pChannelName + "/" + fileName);
+                    try
+                    {
+                        File.Delete(pChannelName + "/" + fileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
                 }
             }
         }
