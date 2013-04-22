@@ -166,27 +166,29 @@ namespace YoutubeCrawler.Utilities
             ///Done
             ///
 
-            ///ReInitialize All Data
-            ///
-            channelName = "";
-            channelId = "";
-            startIndex = 1;
-            recordCount = 0;
-            updatedFlag = false;
-            ///ReInitializing Done
+            //Commenting Temporarily on Paolo Request.. <04/19/2013>
 
-            dictionary = new Dictionary<string, VideoCommentWrapper>();
-            dictionary = GlobalConstants.commentDictionary;
-            int testCount = 0;
-            foreach (KeyValuePair<string, VideoCommentWrapper> pair in dictionary)
-            {
-                GlobalConstants.commentDictionary = new Dictionary<string, VideoCommentWrapper>();
-                VideoCommentWrapper videoComment = pair.Value;
-                ParseChannelLevel2(videoComment, pAppName, pDevKey);
-                testCount++;
-                //if (testCount > 3)
-                //    break;
-            }
+            /////ReInitialize All Data
+            /////
+            //channelName = "";
+            //channelId = "";
+            //startIndex = 1;
+            //recordCount = 0;
+            //updatedFlag = false;
+            /////ReInitializing Done
+
+            //dictionary = new Dictionary<string, VideoCommentWrapper>();
+            //dictionary = GlobalConstants.commentDictionary;
+            //int testCount = 0;
+            //foreach (KeyValuePair<string, VideoCommentWrapper> pair in dictionary)
+            //{
+            //    GlobalConstants.commentDictionary = new Dictionary<string, VideoCommentWrapper>();
+            //    VideoCommentWrapper videoComment = pair.Value;
+            //    ParseChannelLevel2(videoComment, pAppName, pDevKey);
+            //    testCount++;
+            //    //if (testCount > 3)
+            //    //    break;
+            //}
 
             return true;
         }
@@ -332,7 +334,7 @@ namespace YoutubeCrawler.Utilities
                     exceptionCounter = 0;
                     return;
                 }
-                File.AppendAllText(Common.CleanFileName(pChannelName) + "/" + log, "\t\tException Found : " + ex.Message + Environment.NewLine + "startIndex = " + startIndex + Environment.NewLine + Environment.NewLine);
+                //File.AppendAllText(Common.CleanFileName(pChannelName) + "/" + log, "\t\tException Found : " + ex.Message + Environment.NewLine + "startIndex = " + startIndex + Environment.NewLine + Environment.NewLine);
                 startIndex += 25;
                 if (requestType == Enumeration.VideoRequestType.All)
                 {
@@ -506,11 +508,30 @@ namespace YoutubeCrawler.Utilities
                 Common.RemoveTempFiles(Constant.tempFiles, channelName);
                 ///Done
                 ///
+
+                ///ReInitialize All Data
+                ///
+                //channelName = "";
+                channelId = "";
+                startIndex = 1;
+                recordCount = 0;
+                updatedFlag = false;
+                ///ReInitializing Done
             }
             //Extract Playlists
             ExtractFromPlaylist(channelName, userId, 1);
-
+            
+            ///ReInitialize All Data
+            ///
+            //channelName = "";
+            channelId = "";
+            startIndex = 1;
+            recordCount = 0;
+            updatedFlag = false;
+            ///ReInitializing Done
+            
             //Extract Favourites
+            
             ExtractFromUserFavourite(channelName, userId, 1);
             
         }
@@ -520,6 +541,16 @@ namespace YoutubeCrawler.Utilities
             string channelFileName = ConfigurationManager.AppSettings["channelsFileName"].ToString();
             string channelFileNameXML = "Playlist-" + ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             string channelCleanedName = Common.CleanFileName(pChannelName);
+            //For Debugging
+            if (ConfigurationManager.AppSettings["ExtractAllVideosFlag"].ToString().Equals("False", StringComparison.InvariantCultureIgnoreCase))
+            {
+                int totalVideo = Int32.Parse(ConfigurationManager.AppSettings["totalVideos"].ToString());
+                if (totalVideo <= recordCount)
+                {
+                    //Constant.tempFiles.Add(videFileNameXML);
+                    return;
+                }
+            }
 
             WebRequest nameRequest = WebRequest.Create(pPlaylistURL + "?start-index=" + pStartIndex);
             HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
@@ -568,6 +599,7 @@ namespace YoutubeCrawler.Utilities
                     }
                     if (!pDictionaryVideoWrapper.ContainsKey(key))
                     {
+                        recordCount++;
                         VideoWrapper vWrapper = new VideoWrapper();
                         vWrapper.setVideoKey(key);
                         vWrapper.setVideoName(title);
@@ -578,7 +610,6 @@ namespace YoutubeCrawler.Utilities
                     }
                 }
             }
-            pStartIndex += 25;
             GetPlaylistVideos(pChannelName, pPlaylistURL, pDictionaryVideoWrapper, strBuilder, pStartIndex);
             Common.RemoveTempFiles(Constant.tempFiles, channelCleanedName);
         }
@@ -684,7 +715,16 @@ namespace YoutubeCrawler.Utilities
             string channelFileNameXML = ConfigurationManager.AppSettings["channelsFileNameXML"].ToString();
             string channelCleanedName = Common.CleanFileName(pChannelName);
             //File.AppendAllText(channelCleanedName + "/" + log, "Entered Inside Parse Channel at : " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-
+            //For Debugging
+            if (ConfigurationManager.AppSettings["ExtractAllVideosFlag"].ToString().Equals("False", StringComparison.InvariantCultureIgnoreCase))
+            {
+                int totalVideo = Int32.Parse(ConfigurationManager.AppSettings["totalVideos"].ToString());
+                if (totalVideo <= recordCount)
+                {
+                    //Constant.tempFiles.Add(videFileNameXML);
+                    return;
+                }
+            }
             //string channelUrl = ConfigurationManager.AppSettings["ChannelSearchUrl"].ToString() + pChannelName + "&start-index=1&max-results=10&v=2";
             WebRequest nameRequest;
             HttpWebResponse nameResponse;
@@ -764,6 +804,7 @@ namespace YoutubeCrawler.Utilities
                         vWrapper.setVideoUrl(url);
                         dictionaryVideoWrapper.Add(key, vWrapper);
                         updatedFlag = true;
+                        recordCount++;
                     }
                     if (updatedFlag)
                         File.AppendAllText(channelCleanedName + "/" + channelFileName, strBuilder.ToString());

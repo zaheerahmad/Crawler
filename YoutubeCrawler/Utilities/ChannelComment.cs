@@ -35,19 +35,29 @@ namespace YoutubeCrawler.Utilities
 
         public static bool CrawlComments(Dictionary<string, VideoWrapper> videoDictionary, string pChannelName)
         {   Dictionary<int, string> htmlFiles = null;
+            File.AppendAllText("CommentsTime.txt", "Time Start : " + DateTime.Now);
             foreach (KeyValuePair<string, VideoWrapper> pair in videoDictionary)
             {
-                string videoFile = String.Empty;
-                int pageNo = 1;
-                
-                VideoWrapper video = pair.Value;
-                htmlFiles = new Dictionary<int, string>();
-                DownloadHtmls(pChannelName, video, htmlFiles, pageNo);
+                try
+                {
 
-                GetAllComments(video, pChannelName, htmlFiles);
-                commentCount = 0;
-                //break;
+                    string videoFile = String.Empty;
+                    int pageNo = 1;
+
+                    VideoWrapper video = pair.Value;
+                    htmlFiles = new Dictionary<int, string>();
+                    DownloadHtmls(pChannelName, video, htmlFiles, pageNo);
+
+                    GetAllComments(video, pChannelName, htmlFiles);
+                    commentCount = 0;
+                    //break;
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
             }
+            File.AppendAllText("CommentsTime.txt", "Time End : " + DateTime.Now);
             
             return true;
         }
@@ -64,6 +74,7 @@ namespace YoutubeCrawler.Utilities
                 HtmlWeb hwObject = new HtmlWeb();
                 //hwObject.UseCookies = false; // Experimental
                 HtmlDocument doc = hwObject.Load(url);
+                
                 HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
                 if (totalCollection == null)
                     return;
@@ -72,6 +83,7 @@ namespace YoutubeCrawler.Utilities
                     return;
                 ///Base Case Ended
                 ///
+
                 File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
                 WebRequest nameRequest = WebRequest.Create(url);
                 HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
@@ -93,14 +105,14 @@ namespace YoutubeCrawler.Utilities
                     pHtmlFiles.Add(pPageNo, dictionaryValue);
                 }
                 pPageNo++;
-
-                DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
+                if(parseAllComments.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                    DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
             }
             catch (Exception ex)
             {
                 //Delete Cookies
                 //pPageNo++;
-                File.AppendAllText(pChannelName + "/Comments/" + "ExceptionLogs.txt", "Exception : at URL : " + url + " -> Exception Message : " + ex.Message);
+                //File.AppendAllText(pChannelName + "/Comments/" + "ExceptionLogs.txt", "Exception : at URL : " + url + " -> Exception Message : " + ex.Message);
                 DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);
             }
         }
@@ -227,7 +239,7 @@ namespace YoutubeCrawler.Utilities
                 }
                 catch (Exception ex)
                 {
-                    File.AppendAllText("Logs Exception Comments.txt", ex.Message + Environment.NewLine + Environment.NewLine);
+                    //File.AppendAllText("Logs Exception Comments.txt", ex.Message + Environment.NewLine + Environment.NewLine);
                     continue;
                 }
             }

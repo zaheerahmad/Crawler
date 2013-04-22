@@ -3,20 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeCrawler", "YoutubeCrawler\YoutubeCrawler.csproj", "{1D30EB31-EB4F-42DC-B594-DF58FB173269}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupCrawler", "SetupCrawler\SetupCrawler.vdproj", "{AEFC43AE-CEBE-4F47-A7F3-C0B94A965820}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupCrawler", "SetupCrawler\SetupCrawler.vdproj", "{48A56D17-FB8F-4C7C-B2CD-FF05DD8AA2E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Debug|x64.ActiveCfg = Debug|x86
+		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Debug|x64.Build.0 = Debug|x86
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Debug|x86.ActiveCfg = Debug|x86
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Debug|x86.Build.0 = Debug|x86
+		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x64.ActiveCfg = Release|x64
+		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x64.Build.0 = Release|x64
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x86.ActiveCfg = Release|x86
 		{1D30EB31-EB4F-42DC-B594-DF58FB173269}.Release|x86.Build.0 = Release|x86
-		{AEFC43AE-CEBE-4F47-A7F3-C0B94A965820}.Debug|x86.ActiveCfg = Debug
-		{AEFC43AE-CEBE-4F47-A7F3-C0B94A965820}.Release|x86.ActiveCfg = Release
+		{48A56D17-FB8F-4C7C-B2CD-FF05DD8AA2E5}.Debug|x64.ActiveCfg = Debug
+		{48A56D17-FB8F-4C7C-B2CD-FF05DD8AA2E5}.Debug|x86.ActiveCfg = Debug
+		{48A56D17-FB8F-4C7C-B2CD-FF05DD8AA2E5}.Release|x64.ActiveCfg = Release
+		{48A56D17-FB8F-4C7C-B2CD-FF05DD8AA2E5}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
