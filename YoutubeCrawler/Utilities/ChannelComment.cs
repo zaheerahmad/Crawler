@@ -12,6 +12,7 @@ using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Net;
+using System.Threading;
 
 namespace YoutubeCrawler.Utilities
 {
@@ -23,6 +24,9 @@ namespace YoutubeCrawler.Utilities
         //totalcomments = "//div[@id='comments-view']//h4"
         //dataId = ".//*[@id='all-comments']/li[1][@data-id]"
         //http://www.youtube.com/all_comments?v=
+        public static int QueueLength = 0;
+        private static bool WaitForComplete;
+        private static ManualResetEvent Event;
         public static int totalComments = 0;
         public static int pageNo = 1;
         public static string fileComment = ConfigurationManager.AppSettings["channelVideoComments"].ToString();
@@ -31,31 +35,100 @@ namespace YoutubeCrawler.Utilities
         public static int totalCommentsParse = Int32.Parse(ConfigurationManager.AppSettings["parseComment"].ToString());
         public static string commentLogFile = ConfigurationManager.AppSettings["LogFilesComment"].ToString();
         //public static Dictionary<string, VideoCommentWrapper> commentDictionary = new Dictionary<string, VideoCommentWrapper>();
-        
+        public static string channelName = string.Empty;
 
+        public static void Produce(VideoWrapper videoDictionary)
+        {
+            ThreadPool.QueueUserWorkItem(
+            new WaitCallback(Consume), videoDictionary);
+            QueueLength++;
+            Console.WriteLine("producing" + QueueLength);
+        }
+
+        public void Wait()
+        {
+            if (QueueLength == 0)
+            {
+                return;
+            }
+            Event = new ManualResetEvent(false);
+            WaitForComplete = true;
+            Event.WaitOne();
+        }
+        public static void Consume(Object obj)
+        {
+            try
+            {
+                string videoFile = String.Empty;
+                int pageNo = 1;
+                Dictionary<int, string> htmlFiles = null;
+                htmlFiles = new Dictionary<int, string>();
+
+                //VideoWrapper video = pair.Value;
+
+                VideoWrapper video = obj as VideoWrapper;
+                
+
+                htmlFiles = new Dictionary<int, string>();
+
+                DownloadHtmls(channelName, video, htmlFiles, pageNo);
+
+         //       GetAllComments(video, pChannelName, htmlFiles);
+                commentCount = 0;
+                QueueLength--;
+                Console.WriteLine("consuming" + QueueLength);
+                if (WaitForComplete)
+                {
+                    if (QueueLength == 0)
+                    {
+                        Event.Set();
+                    }
+                }
+                //break;
+            }
+            catch (Exception ex)
+            {
+                //   continue;
+            }
+        }
+        
         public static bool CrawlComments(Dictionary<string, VideoWrapper> videoDictionary, string pChannelName)
-        {   Dictionary<int, string> htmlFiles = null;
+        {
+            channelName = pChannelName;
+            //Dictionary<int, string> htmlFiles = null;
+            if(File.Exists("ThreadsLog.txt"))
+            {
+                File.Delete("ThreadsLog.txt");
+            }
             File.AppendAllText("CommentsTime.txt", "Time Start : " + DateTime.Now);
+            int totalThreads = Int32.Parse(ConfigurationManager.AppSettings["totalThreadsAtOneTime"].ToString());
             foreach (KeyValuePair<string, VideoWrapper> pair in videoDictionary)
             {
                 try
                 {
 
-                    string videoFile = String.Empty;
-                    int pageNo = 1;
+                    //string videoFile = String.Empty;
+                    //int pageNo = 1;
 
                     VideoWrapper video = pair.Value;
-                    htmlFiles = new Dictionary<int, string>();
-                    DownloadHtmls(pChannelName, video, htmlFiles, pageNo);
+                    Produce(video);
+                    while (QueueLength >= totalThreads)
+                        Thread.Sleep(2000);
+                    //htmlFiles = new Dictionary<int, string>();
+                    //DownloadHtmls(pChannelName, video, htmlFiles, pageNo);
 
-                    //GetAllComments(video, pChannelName, htmlFiles);
-                    commentCount = 0;
-                    //break;
+                    ////GetAllComments(video, pChannelName, htmlFiles);
+                    //commentCount = 0;
+                    ////break;
                 }
                 catch (Exception ex)
                 {
                     continue;
                 }
+            }
+            while (QueueLength > 0)
+            {
+                Thread.Sleep(1000);
             }
             File.AppendAllText("CommentsTime.txt", "Time End : " + DateTime.Now);
             
@@ -73,8 +146,10 @@ namespace YoutubeCrawler.Utilities
                 ///
                 HtmlWeb hwObject = new HtmlWeb();
                 //hwObject.UseCookies = false; // Experimental
+                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " going to hit URL at page # " + pPageNo + ".. " + DateTime.Now + Environment.NewLine);
                 HtmlDocument doc = hwObject.Load(url);
-                
+                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " got response of page # " + pPageNo + ".." + DateTime.Now + Environment.NewLine);
+
                 HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
                 if (totalCollection == null)
                     return;
@@ -91,7 +166,7 @@ namespace YoutubeCrawler.Utilities
                 string videoUrl = "https://www.youtube.com/watch?v=" + pVideo.getVideoKey();
                 bool videoUrlFlag = false;
                 bool breakLoop = false;
-
+                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " starting to extract data.." + Environment.NewLine);
                 foreach (HtmlNode node in totalCollection)
                 {
                     //string[] userArr = node.InnerText.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -144,6 +219,8 @@ namespace YoutubeCrawler.Utilities
                             }
                         }
                     }
+                    
+                    //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " starting to write data in file.." + Environment.NewLine);
                     if (!displayName.Equals("") && !comment.Equals("") && !dataId.Equals("") && !authorId.Equals("") && !user.Equals("") && !GlobalConstants.commentDictionary.ContainsKey(dataId))
                     {
                         VideoCommentWrapper commentWrapper = new VideoCommentWrapper();
@@ -174,6 +251,7 @@ namespace YoutubeCrawler.Utilities
                         File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment Date : " + date + Environment.NewLine);
                         File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment : " + comment + Environment.NewLine);
                     }
+                    //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " ended writing data in file.." + Environment.NewLine);
                     if (parseAllComments.Equals("false", StringComparison.CurrentCultureIgnoreCase))
                     {
                         if (totalCommentsParse <= commentCount)
@@ -184,7 +262,7 @@ namespace YoutubeCrawler.Utilities
                     }
 
                 }
-
+                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " extracted all data.." + Environment.NewLine);
                 ////Ended Added
 
                 ////Commented by Me
