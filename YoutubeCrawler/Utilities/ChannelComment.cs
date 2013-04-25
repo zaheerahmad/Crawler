@@ -48,7 +48,7 @@ namespace YoutubeCrawler.Utilities
                     htmlFiles = new Dictionary<int, string>();
                     DownloadHtmls(pChannelName, video, htmlFiles, pageNo);
 
-                    GetAllComments(video, pChannelName, htmlFiles);
+                    //GetAllComments(video, pChannelName, htmlFiles);
                     commentCount = 0;
                     //break;
                 }
@@ -84,26 +84,135 @@ namespace YoutubeCrawler.Utilities
                 ///Base Case Ended
                 ///
 
-                File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
-                WebRequest nameRequest = WebRequest.Create(url);
-                HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
-                Stream nameStream = nameResponse.GetResponseStream();
-                StreamReader nameReader = new StreamReader(nameStream);
-                string htmlData = nameReader.ReadToEnd();
-                if (htmlData != null && !htmlData.Equals(""))
+                //Code Added by Me Right Now ....
+                ///
+
+                totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']//div[@class='content']");
+                string videoUrl = "https://www.youtube.com/watch?v=" + pVideo.getVideoKey();
+                bool videoUrlFlag = false;
+                bool breakLoop = false;
+
+                foreach (HtmlNode node in totalCollection)
                 {
-                    string videoName = pChannelName + "/Comments/" + Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
-                    string dictionaryValue = Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
-                    if (!Directory.Exists(pChannelName + "/Comments/"))
+                    //string[] userArr = node.InnerText.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    string user = string.Empty;
+                    string displayName = string.Empty;
+                    string date = string.Empty;
+                    string comment = string.Empty;
+                    HtmlNode nodeData = node.ParentNode;
+                    string dataId = nodeData.Attributes[2].Value.Trim();
+                    string authorId = nodeData.Attributes[1].Value.Trim();
+                    HtmlNodeCollection childNodes = node.ChildNodes;
+                    int divCount = 0;
+                    foreach (HtmlNode child in childNodes)
                     {
-                        Directory.CreateDirectory(pChannelName + "/Comments/");
+                        if (child.Name.Equals("p"))
+                        {
+                            bool userFlag = false;
+                            //bool dateFlag = false;
+                            HtmlNodeCollection col = child.ChildNodes;
+                            foreach (HtmlNode n in col)
+                            {
+                                if (n.Name.Equals("span") && !userFlag)
+                                {
+                                    foreach (HtmlNode nNode in n.ChildNodes)
+                                    {
+                                        if (nNode.Name.Equals("a"))
+                                        {
+                                            user = nNode.Attributes["href"].Value.Split(new Char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                                            break;
+                                        }
+                                    }
+                                    displayName = n.InnerText.Trim();
+                                    userFlag = true;
+                                }
+                                else if (n.Name.Equals("span"))
+                                {
+                                    date = n.InnerText.Trim();
+                                    //dateFlag = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (child.Name.Equals("div"))
+                        {
+                            if (divCount == 0)
+                            {
+                                //That means Its Comment Text
+                                comment = child.InnerText.Trim();
+                                divCount++;
+                            }
+                        }
+                    }
+                    if (!displayName.Equals("") && !comment.Equals("") && !dataId.Equals("") && !authorId.Equals("") && !user.Equals("") && !GlobalConstants.commentDictionary.ContainsKey(dataId))
+                    {
+                        VideoCommentWrapper commentWrapper = new VideoCommentWrapper();
+
+                        commentWrapper.authorId = authorId;
+                        commentWrapper.commentId = dataId;
+                        commentWrapper.commentText = comment;
+                        commentWrapper.time = date;
+                        commentWrapper.displayName = displayName;
+                        commentWrapper.userName = user;
+
+                        GlobalConstants.commentDictionary.Add(dataId, commentWrapper);
+
+                        string videoFileName = pVideo.getVideoName();
+                        //videoFile = videoName;
+                        string videoName = Common.CleanFileName(videoFileName + "-" + fileComment) + ".txt";
+                        if (!Directory.Exists(pChannelName + "/" + "Comments"))
+                        {
+                            Directory.CreateDirectory(pChannelName + "/" + "Comments");
+                        }
+                        commentCount++;
+                        if (!videoUrlFlag)
+                        {
+                            File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Video Url : " + videoUrl + Environment.NewLine + "\r\n");
+                            videoUrlFlag = true;
+                        }
+                        File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "User name : " + displayName + Environment.NewLine);
+                        File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment Date : " + date + Environment.NewLine);
+                        File.AppendAllText(pChannelName + "/" + "Comments" + "/" + videoName, "Comment : " + comment + Environment.NewLine);
+                    }
+                    if (parseAllComments.Equals("false", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        if (totalCommentsParse <= commentCount)
+                        {
+                            breakLoop = true;
+                            break;
+                        }
                     }
 
-                    File.WriteAllText(videoName, htmlData);
-                    File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "End Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine + Environment.NewLine);
-                    //tempFiles.Add("/Comments/" + dictionaryValue);
-                    pHtmlFiles.Add(pPageNo, dictionaryValue);
                 }
+
+                ////Ended Added
+
+                ////Commented by Me
+
+
+                //File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "Start Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine);
+                //WebRequest nameRequest = WebRequest.Create(url);
+                //HttpWebResponse nameResponse = (HttpWebResponse)nameRequest.GetResponse();
+                //Stream nameStream = nameResponse.GetResponseStream();
+                //StreamReader nameReader = new StreamReader(nameStream);
+                //string htmlData = nameReader.ReadToEnd();
+                //if (htmlData != null && !htmlData.Equals(""))
+                //{
+                //    string videoName = pChannelName + "/Comments/" + Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
+                //    string dictionaryValue = Common.CleanFileName(pVideo.getVideoName()) + "-" + pPageNo + ".html";
+                //    if (!Directory.Exists(pChannelName + "/Comments/"))
+                //    {
+                //        Directory.CreateDirectory(pChannelName + "/Comments/");
+                //    }
+
+                //    File.WriteAllText(videoName, htmlData);
+                //    File.AppendAllText(pChannelName + "/CommentsTimeLog.txt", "End Download Time for file : " + pVideo.getVideoName() + "-" + pPageNo + ": " + DateTime.Now + Environment.NewLine + Environment.NewLine);
+                //    //tempFiles.Add("/Comments/" + dictionaryValue);
+                //    pHtmlFiles.Add(pPageNo, dictionaryValue);
+                //}
+
+                ////Comment Ended
+
                 pPageNo++;
                 if(parseAllComments.Equals("true", StringComparison.CurrentCultureIgnoreCase))
                     DownloadHtmls(pChannelName, pVideo, pHtmlFiles, pPageNo);   //Recursive Call
