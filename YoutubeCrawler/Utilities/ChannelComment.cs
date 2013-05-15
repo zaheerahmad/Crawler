@@ -96,11 +96,11 @@ namespace YoutubeCrawler.Utilities
         {
             channelName = pChannelName;
             //Dictionary<int, string> htmlFiles = null;
-            if(File.Exists("ThreadsLog.txt"))
-            {
-                File.Delete("ThreadsLog.txt");
-            }
-            File.AppendAllText("CommentsTime.txt", "Time Start : " + DateTime.Now);
+            //if(File.Exists("ThreadsLog.txt"))
+            //{
+            //    File.Delete("ThreadsLog.txt");
+            //}
+            //File.AppendAllText("CommentsTime.txt", "Time Start : " + DateTime.Now);
             int totalThreads = Int32.Parse(ConfigurationManager.AppSettings["totalThreadsAtOneTime"].ToString());
             foreach (KeyValuePair<string, VideoWrapper> pair in videoDictionary)
             {
@@ -130,7 +130,7 @@ namespace YoutubeCrawler.Utilities
             {
                 Thread.Sleep(1000);
             }
-            File.AppendAllText("CommentsTime.txt", "Time End : " + DateTime.Now);
+            //File.AppendAllText("CommentsTime.txt", "Time End : " + DateTime.Now);
             
             return true;
         }
@@ -146,9 +146,9 @@ namespace YoutubeCrawler.Utilities
                 ///
                 HtmlWeb hwObject = new HtmlWeb();
                 //hwObject.UseCookies = false; // Experimental
-                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " going to hit URL at page # " + pPageNo + ".. " + DateTime.Now + Environment.NewLine);
+                //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " going to hit URL at page # " + pPageNo + ".. " + DateTime.Now + Environment.NewLine);
                 HtmlDocument doc = hwObject.Load(url);
-                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " got response of page # " + pPageNo + ".." + DateTime.Now + Environment.NewLine);
+                //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " got response of page # " + pPageNo + ".." + DateTime.Now + Environment.NewLine);
 
                 HtmlNodeCollection totalCollection = doc.DocumentNode.SelectNodes("//ul[@id='all-comments']//li[@class='comment']");
                 if (totalCollection == null)
@@ -166,7 +166,7 @@ namespace YoutubeCrawler.Utilities
                 string videoUrl = "https://www.youtube.com/watch?v=" + pVideo.getVideoKey();
                 bool videoUrlFlag = false;
                 bool breakLoop = false;
-                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " starting to extract data.." + Environment.NewLine);
+                //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " starting to extract data.." + Environment.NewLine);
                 foreach (HtmlNode node in totalCollection)
                 {
                     //string[] userArr = node.InnerText.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -262,7 +262,7 @@ namespace YoutubeCrawler.Utilities
                     }
 
                 }
-                File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " extracted all data.." + Environment.NewLine);
+                //File.AppendAllText("ThreadsLog.txt", "Thread " + Thread.CurrentThread.GetHashCode() + " extracted all data.." + Environment.NewLine);
                 ////Ended Added
 
                 ////Commented by Me
